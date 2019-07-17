@@ -30,7 +30,7 @@ window.deployService = async (constructorArgs) => {
     bytecode,
     arguments: constructorArgs,
     header: { confidential: false },
-    options: { gasLimit: '0xe42400' }, // TODO: Remove this
+    options: { gasLimit: '0xf42400' }, // TODO: Remove this
   }).then((service) => {
     return service;
   });
@@ -49,6 +49,10 @@ window.getCandidates = async () => {
 
 window.getDescription = async () => {
   return SecretBallot.description();
+}
+
+window.getOpen = async () => {
+  return SecretBallot.voting_open();
 }
 
 window.getWinner = async () => {

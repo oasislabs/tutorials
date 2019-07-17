@@ -39,6 +39,11 @@ impl Ballot {
         Ok(self.candidates.iter().map(String::as_ref).collect())
     }
 
+    /// Returns whether voting is still open.
+    pub fn voting_open(&self, _ctx: &Context) -> Result<bool> {
+        Ok(self.accepting_votes)
+    }
+
     /// Cast a vote for a candidate.
     /// `candidate_num` is the index of the chosen candidate in `Ballot::candidates`.
     /// If you have already voted, this will change your vote to the new candidate.
@@ -83,6 +88,8 @@ impl Ballot {
             .0 as u32)
     }
 
+    /// Returns the number of votes cast for each candidate.
+    /// This method can only be called after voting has closed.
     pub fn results(&self, _ctx: &Context) -> Result<Vec<u32>> {
         if self.accepting_votes {
             return Err("Voting is not closed.".to_string());
@@ -122,6 +129,7 @@ mod tests {
 
         assert_eq!(ballot.description(&admin_ctx).unwrap(), description);
         assert_eq!(ballot.candidates(&admin_ctx).unwrap(), candidates);
+        assert_eq!(ballot.voting_open(&admin_ctx).unwrap(), true);
 
         // Can't get winner before voting has closed.
         assert!(ballot.winner(&voter_ctx).is_err());
@@ -137,6 +145,7 @@ mod tests {
         // Votes can't be cast after ballot has closed.
         ballot.vote(&admin_ctx, 0).unwrap_err();
 
+        assert_eq!(ballot.voting_open(&voter_ctx).unwrap(), false);
         assert_eq!(ballot.winner(&voter_ctx).unwrap(), 1);
         assert_eq!(ballot.results(&voter_ctx).unwrap(), vec![0, 2]);
     }

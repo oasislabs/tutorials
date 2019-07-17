@@ -23,12 +23,18 @@
         </div>
 
         <template v-for="(option, index) of chartOptions.labels">
-          <div class="Results_Result pl-5 pa-2 pt-1">
+          <div
+            class="Results_Result pl-5 pa-2 pt-1"
+            :key="'result-' + index"
+          >
             <div class="Results_Number pr-4">#{{ index + 1 }}</div>
             <div class="Results_Option pt-2">{{ option }}</div>
             <div class="Results_Score pt-2 pr-5">{{ series[index] }}%</div>
           </div>
-          <v-divider class="Results_Divider"></v-divider>
+          <v-divider
+            class="Results_Divider"
+            :key="'divider-' + index"
+          ></v-divider>
         </template>
       </v-card-text>
     </v-card>

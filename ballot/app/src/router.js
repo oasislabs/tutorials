@@ -1,6 +1,11 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
+import Welcome from './views/Welcome.vue';
+import Vote from './views/Vote.vue';
+import Confirmation from './views/Confirmation.vue';
+import Results from './views/Results.vue';
+
 Vue.use(Router);
 
 const router = new Router({
@@ -10,25 +15,25 @@ const router = new Router({
     {
       path: '/',
       name: 'welcome',
-      component: () => import(/* webpackChunkName: "welcome" */ './views/Welcome.vue'),
+      component: Welcome,
       props: true,
     },
     {
       path: '/vote',
       name: 'vote',
-      component: () => import(/* webpackChunkName: "vote" */ './views/Vote.vue'),
+      component: Vote,
       props: true,
     },
     {
       path: '/confirm',
       name: 'confirm',
-      component: () => import(/* webpackChunkName: "confirm" */ './views/Confirmation.vue'),
+      component: Confirmation,
       props: true,
     },
     {
       path: '/results',
       name: 'results',
-      component: () => import(/* webpackChunkName: "results" */ './views/Results.vue'),
+      component: Results,
       props: true,
     },
   ],

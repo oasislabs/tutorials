@@ -17,17 +17,17 @@
           </div>
         </div>
         <div class="text-xs-center pt-4">
-          <template v-if="voteClosed">
-            <v-btn id="Confirm_ButtonClosed" to="/results">
+          <template v-if="voteOpen">
+            <div id="Confirm_VoteOpenDisclaimer" class="pb-4">
+              The results will be available when ballot closes. <br />
+              We advocate for privacy and information disclosure.
+            </div>
+            <v-btn id="Confirm_ButtonOpen">
               View the result
             </v-btn>
           </template>
           <template v-else>
-            <div id="Confirm_VoteOpenDisclaimer" class="pb-4">
-              The results will be available when the ballot closes in <span>{{ timeToClose }}</span>. <br />
-              We advocate for privacy and information disclosure.
-            </div>
-            <v-btn id="Confirm_ButtonOpen">
+            <v-btn id="Confirm_ButtonClosed" to="/results">
               View the result
             </v-btn>
           </template>
@@ -44,10 +44,12 @@
 <script>
 export default {
   name: 'Confirm',
+  async created () {
+    this.voteOpen = await getOpen();
+  },
   data () {
     return {
-      voteClosed: false,
-      timeToClose: '1 day and 7 hours',
+      voteOpen: false,
     };
   },
 };

@@ -54,10 +54,8 @@
 export default {
   name: 'Vote',
   async created () {
-    console.log('getting candidates');
-    this.options = await getCandidates();
-    console.log('getting gas');
     this.question = await getDescription();
+    this.options = await getCandidates();
   },
   data () {
     return {

@@ -65,11 +65,11 @@ export default {
     } else {
       await deployService(
         [
-          '<ballot description>',
+          'Which starter Pokemon is the best?',
           [
-            '<option 1>',
-            '<option 2>',
-            // ...
+            'Bulbasaur',
+            'Charmander',
+            'Squirtle',
           ],
         ],
       );
