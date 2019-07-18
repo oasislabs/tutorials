@@ -14,3 +14,10 @@ new Vue({
   store,
   render: h => h(App),
 }).$mount('#app');
+
+if (
+  Object.keys(router.currentRoute.query).length === 0
+  && router.currentRoute.query.constructor === Object
+) {
+  router.replace({ name: 'welcome' });
+}

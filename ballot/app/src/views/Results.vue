@@ -47,6 +47,18 @@ import { mapActions } from 'vuex';
 export default {
   name: 'Results',
   async created () {
+    if (!this.$route.query.id) {
+      return;
+    }
+    await this.loadService(this.$route.query.id);
+
+    // Check if the vote is closed, and redirect to vote page if it's not
+    const open = await this.getOpen();
+    if (open) {
+      this.$router.push({ name: 'vote', query: this.$route.query });
+      return;
+    }
+
     this.question = await this.getDescription();
 
     const labels = await this.getCandidates();
@@ -114,8 +126,10 @@ export default {
   },
   methods: {
     ...mapActions([
+      'loadService',
       'getDescription',
       'getCandidates',
+      'getOpen',
       'getResults',
     ]),
   },

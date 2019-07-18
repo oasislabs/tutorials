@@ -55,7 +55,7 @@ export default new Vuex.Store({
       commit('setBallot', ballot);
     },
     // Ballot API
-    async castVote(candidateNum) {
+    async castVote({_}, candidateNum) {
       return this.state.ballot.vote(candidateNum, { gasLimit: '0xf42400' });
     },
     async closeBallot() {

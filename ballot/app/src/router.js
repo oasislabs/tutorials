@@ -16,25 +16,26 @@ const router = new Router({
       path: '/',
       name: 'welcome',
       component: Welcome,
-      props: true,
     },
     {
       path: '/vote',
       name: 'vote',
       component: Vote,
-      props: true,
     },
     {
       path: '/confirm',
       name: 'confirm',
       component: Confirmation,
-      props: true,
     },
     {
       path: '/results',
       name: 'results',
       component: Results,
-      props: true,
+    },
+    {
+      path: '*',
+      name: 'welcome',
+      component: Welcome,
     },
   ],
 });

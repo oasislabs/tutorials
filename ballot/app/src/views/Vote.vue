@@ -64,6 +64,11 @@ import { mapActions } from 'vuex';
 export default {
   name: 'Vote',
   async created () {
+    if (!this.$route.query.id) {
+      return;
+    }
+    await this.loadService(this.$route.query.id);
+
     this.question = await this.getDescription();
     this.options = await this.getCandidates();
   },
@@ -77,6 +82,7 @@ export default {
   },
   methods: {
     ...mapActions([
+      'loadService',
       'castVote',
       'getDescription',
       'getCandidates',

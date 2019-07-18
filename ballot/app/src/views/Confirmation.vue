@@ -65,6 +65,11 @@ import { mapActions } from 'vuex';
 export default {
   name: 'Confirm',
   async created () {
+    if (!this.$route.query.id) {
+      return;
+    }
+    await this.loadService(this.$route.query.id);
+
     this.open = await this.getOpen();
     this.admin = await this.isAdmin();
   },
@@ -77,6 +82,7 @@ export default {
   },
   methods: {
     ...mapActions([
+      'loadService',
       'closeBallot',
       'isAdmin',
       'getOpen',
