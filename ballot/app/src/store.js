@@ -41,7 +41,6 @@ export default new Vuex.Store({
       const ballot = await oasis.deploy({
         bytecode,
         arguments: config.BALLOT_ARGS,
-        header: { confidential: false },
         options: { gasLimit: '0xf42400' }, // TODO: Remove this, and other gasLimits
       });
 

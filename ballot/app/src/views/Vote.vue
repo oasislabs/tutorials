@@ -69,6 +69,13 @@ export default {
     }
     await this.loadService(this.$route.query.id);
 
+    // Check if the vote is closed, and and redirect to results page if it is
+    const open = await this.getOpen();
+    if (!open) {
+      this.$router.push({ name: 'results', query: this.$route.query });
+      return;
+    }
+
     this.question = await this.getDescription();
     this.options = await this.getCandidates();
   },
@@ -86,6 +93,7 @@ export default {
       'castVote',
       'getDescription',
       'getCandidates',
+      'getOpen',
     ]),
     async submit () {
       this.loading = true;
