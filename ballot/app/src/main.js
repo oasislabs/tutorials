@@ -1,11 +1,10 @@
 import Vue from 'vue';
 import VueApexCharts from 'vue-apexcharts';
+import oasis from '@oasislabs/client';
 
 import App from './App.vue';
-import './plugins/vuetify';
 import router from './router';
-
-import oasis from '@oasislabs/client';
+import './plugins/vuetify';
 
 let SecretBallot;
 
@@ -22,50 +21,36 @@ window.deployService = async (constructorArgs) => {
     .then(response => response.body)
     .then(stream => new Response(stream))
     .then(async (response) => {
-      const bytecode = await response.arrayBuffer();
-      return new Uint8Array(bytecode);
+      const serviceBinary = await response.arrayBuffer();
+      return new Uint8Array(serviceBinary);
     });
-  
+
   SecretBallot = await oasis.deploy({
     bytecode,
     arguments: constructorArgs,
     header: { confidential: false },
     options: { gasLimit: '0xf42400' }, // TODO: Remove this
-  }).then((service) => {
-    return service;
   });
-
-  console.log('deployed');
 };
 
 window.loadService = async (address) => {
   SecretBallot = oasis.Service.at(address);
-}
+};
 
 // Ballot API
-window.getCandidates = async () => {
-  return SecretBallot.candidates();
-}
+window.castVote = async (candidateNum) => SecretBallot.vote(candidateNum);
 
-window.getDescription = async () => {
-  return SecretBallot.description();
-}
+window.closeBallot = async () => SecretBallot.close();
 
-window.getOpen = async () => {
-  return SecretBallot.voting_open();
-}
+window.getCandidates = async () => SecretBallot.candidates();
 
-window.getWinner = async () => {
-  return SecretBallot.winner();
-}
+window.getDescription = async () => SecretBallot.description();
 
-window.castVote = async (candidateNum) => {
-  SecretBallot.vote(candidateNum);
-}
+window.getOpen = async () => SecretBallot.voting_open();
 
-window.closeBallot = async () => {
-  SecretBallot.close();
-}
+window.getResults = async () => SecretBallot.results();
+
+window.getWinner = async () => SecretBallot.winner();
 
 Vue.config.productionTip = false;
 Vue.component('v-apex-chart', VueApexCharts);

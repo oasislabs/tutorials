@@ -38,7 +38,16 @@
             <v-card-text>
               <div id="SecretBallot_FooterText">
                 This service is powered by the Oasis Network. <br />
-                Learn more about "Oasis Services" or review step-by-step process on how to build this service.
+                <a
+                  href="https://oasislabs.com"
+                  target="_blank"
+                >Learn more about Oasis</a>
+                or review the
+                <a
+                  href="https://help.oasislabs.com/en/articles/3117188-beginner-secret-ballot"
+                  target="_blank"
+                >step-by-step process</a>
+                to build this service.
               </div>
             
               <br />

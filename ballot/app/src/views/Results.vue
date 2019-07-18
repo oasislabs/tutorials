@@ -19,7 +19,7 @@
 
         <div id="Results_Question" class="pb-4">
           <b>Question:</b> <br />
-          What are you planning to build on Oasis?
+          {{ question }}
         </div>
 
         <template v-for="(option, index) of chartOptions.labels">
@@ -44,21 +44,30 @@
 <script>
 export default {
   name: 'Results',
+  async created () {
+    this.question = await getDescription();
+
+    const labels = await getCandidates();
+    const series = await getResults();
+    
+    // Process results
+    const totalVotes = series.reduce((total, votes) => total + votes, 0);
+    const zip = series
+      .map((count, index) => [labels[index], count])
+      .sort((a, b) => b[1] - a[1]);
+
+    this.chartOptions.labels = zip.map(pair => pair[0]);
+    this.series = zip.map(pair => pair[1] * 100 / totalVotes);
+  },
   data () {
     return {
-      series: [38, 18, 16, 13, 9, 6],
+      question: '',
+      series: [],
       chartOptions: {
         legend: {
           show: false,
         },
-        labels: [
-          'Private Data Sharing',
-          'A Wallet',
-          'Medical records APP',
-          'Defi / Credit scoring',
-          'Supply chain APP',
-          'Other',
-        ],
+        labels: [],
         plotOptions: {
           pie: {
             dataLabels: {

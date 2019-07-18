@@ -18,7 +18,7 @@
               :key="index"
               class="Vote_Option pa-3 ma-1"
             >
-              <v-radio :value="option">
+              <v-radio :value="index">
                 <template v-slot:label>
                   <div>{{ option }}</div>
                 </template>
@@ -28,10 +28,17 @@
         </v-radio-group>
 
         <div class="text-xs-center">
-          <v-btn id="Vote_UnselectedButton" disabled v-if="radios === null">
+          <v-btn id="Vote_UnselectedButton"
+            disabled
+            v-if="radios === null"
+          >
             Submit your vote
           </v-btn>
-          <v-btn id="Vote_SelectedButton" to="/confirm" v-else>
+          <v-btn
+            id="Vote_SelectedButton"
+            @click="submit"
+            v-else
+          >
             Submit your vote
           </v-btn>
         </div>
@@ -63,6 +70,12 @@ export default {
       question: '',
       radios: null,
     };
+  },
+  methods: {
+    async submit() {
+      await castVote(this.radios);
+      this.$router.push('/confirm');
+    },
   },
 };
 </script>

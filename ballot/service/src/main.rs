@@ -29,19 +29,24 @@ impl Ballot {
         })
     }
 
-    /// Returns the description of this ballot.
-    pub fn description(&self, _ctx: &Context) -> Result<&str> {
-        Ok(&self.description)
-    }
-
     /// Returns the candidates being voted upon.
     pub fn candidates(&self, _ctx: &Context) -> Result<Vec<&str>> {
         Ok(self.candidates.iter().map(String::as_ref).collect())
     }
 
+    /// Returns the description of this ballot.
+    pub fn description(&self, _ctx: &Context) -> Result<&str> {
+        Ok(&self.description)
+    }
+
     /// Returns whether voting is still open.
     pub fn voting_open(&self, _ctx: &Context) -> Result<bool> {
         Ok(self.accepting_votes)
+    }
+
+    /// Returns whether you are the ballot admin.
+    pub fn admin(&self, ctx: &Context) -> Result<bool> {
+        Ok(self.admin.to_string() == ctx.sender().to_string())
     }
 
     /// Cast a vote for a candidate.

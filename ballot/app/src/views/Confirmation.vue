@@ -17,7 +17,7 @@
           </div>
         </div>
         <div class="text-xs-center pt-4">
-          <template v-if="voteOpen">
+          <template v-if="!voteOpen">
             <div id="Confirm_VoteOpenDisclaimer" class="pb-4">
               The results will be available when ballot closes. <br />
               We advocate for privacy and information disclosure.
@@ -49,7 +49,7 @@ export default {
   },
   data () {
     return {
-      voteOpen: false,
+      voteOpen: true,
     };
   },
 };
