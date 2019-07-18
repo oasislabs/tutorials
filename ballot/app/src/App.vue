@@ -177,7 +177,7 @@ export default {
   text-transform: none;
 
   position: relative;
-  left: 80px;
-  top: 20px;
+  left: 2.5%;
+  top: 5%;
 }
 </style>

@@ -9,7 +9,7 @@
           Hi, Welcome to <b>Secret Ballot APP</b>
         </div>
         <div id="Welcome_Description" class="pt-3">
-          The Secret Ballot app lets you share a poll with friends or coworkers <br />
+          The Secret Ballot app lets you share a poll with friends or coworkers
           and ensures votes are kept private, even from the vote maker!
         </div>
       </v-card-text>
@@ -72,7 +72,7 @@ export default {
 
 #Welcome_Container {
   position: relative;
-  top: 25vh;
+  top: 20vh;
 }
 
 #Welcome_Description {
@@ -80,6 +80,8 @@ export default {
   font-size: 17px;
   font-weight: 300;
   line-height: 27px;
+
+  max-width: 525px;
 
   color: #5b6872;
   letter-spacing: -0.377778px;

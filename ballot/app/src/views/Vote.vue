@@ -49,7 +49,7 @@
             src="/assets/SecretBallot_warn.svg"
           >
           <span class="pl-1">
-            Once you submit, you won't be able to change your answer <br />
+            Once you submit, you won't be able to change your answer
             or vote again as a different identity.
           </span>
         </div>
@@ -107,13 +107,12 @@ export default {
   display: block;
   margin-left: auto;
   margin-right: auto;
+  max-width: 95%;
 }
 
 #Vote_Container {
   position: relative;
   top: 5vh;
-
-  overflow-y: scroll;
 }
 
 #Vote_Reminder {
@@ -179,6 +178,8 @@ export default {
   line-height: 20px;
   text-align: center;
 
+  max-width: 525px;
+
   color: #5b6872;
   mix-blend-mode: normal;
   opacity: 0.59;
@@ -194,7 +195,8 @@ export default {
 
 .Vote_Option {
   height: 56px;
-  width: 480px;
+  width: 525px;
+  max-width: 80vw;
 
   background: white;
   border: 1.5px solid #eaeef1;

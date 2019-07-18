@@ -22,20 +22,25 @@
           {{ question }}
         </div>
 
-        <template v-for="(option, index) of chartOptions.labels">
-          <div
-            class="Results_Result pl-5 pa-2 pt-1"
-            :key="'result-' + index"
+        <div class="Results_ResultsContainer">
+          <template
+            v-for="(option, index) of chartOptions.labels"
+            class="Results_Template"
           >
-            <div class="Results_Number pr-4">#{{ index + 1 }}</div>
-            <div class="Results_Option pt-2">{{ option }}</div>
-            <div class="Results_Score pt-2 pr-5">{{ series[index] }}%</div>
-          </div>
-          <v-divider
-            class="Results_Divider"
-            :key="'divider-' + index"
-          ></v-divider>
-        </template>
+            <div
+              class="Results_Result pl-5 pa-2 pt-1"
+              :key="'result-' + index"
+            >
+              <div class="Results_Number Results_Text pr-4">#{{ index + 1 }}</div>
+              <div class="Results_Option Results_Text pt-2">{{ option }}</div>
+              <div class="Results_Score Results_Text pt-2 pr-5">{{ series[index] }}%</div>
+            </div>
+            <v-divider
+              class="Results_Divider"
+              :key="'divider-' + index"
+            ></v-divider>
+          </template>
+        </div>
       </v-card-text>
     </v-card>
   </v-container>
@@ -84,10 +89,10 @@ export default {
       question: '',
       series: [],
       chartOptions: {
+        labels: [],
         legend: {
           show: false,
         },
-        labels: [],
         plotOptions: {
           pie: {
             dataLabels: {
@@ -139,11 +144,6 @@ export default {
 <style scoped lang="scss">
 @import '~oasis-style/oasis.scss';
 
-.apexcharts-tooltip {
-  background-color: $dark-gray;
-  color: $dark-gray;
-}
-
 #Results_Card {
   background-color: $background-light-gray;
 
@@ -155,8 +155,6 @@ export default {
 #Results_Container {
   position: relative;
   top: 5vh;
-
-  overflow-y: scroll;
 }
 
 #Results_Question {
@@ -180,10 +178,6 @@ export default {
   letter-spacing: 2px;
 
   color: #334857;
-}
-
-.Results_Divider {
-  width: 150%;
 }
 
 .Results_Number {
@@ -210,8 +204,23 @@ export default {
 .Results_Result {
   height: 56px;
   width: 480px;
-  margin-left: 60px;
-  margin-right: 60px;
+  max-width: 80vw;
+
+  width: 100%;
+  margin: 0 auto;
+}
+
+.Results_ResultsContainer {
+  width: 500px;
+  max-width: 80vw;
+}
+
+.Results_ResultsContainer:hover .Results_Text {
+  opacity: 0.33;
+}
+
+.Results_Result:hover .Results_Text {
+  opacity: 1.00;
 }
 
 .Results_Score {

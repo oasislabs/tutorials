@@ -19,7 +19,7 @@
         <div class="text-xs-center pt-4">
           <template v-if="open">
             <div id="Confirm_VoteOpenDisclaimer" class="pb-4">
-              The results will be available when ballot closes. <br />
+              The results will be available when the ballot closes. <br />
               We advocate for privacy and information disclosure.
             </div>
             <v-btn id="Confirm_ButtonDisabled">
@@ -111,11 +111,12 @@ export default {
   display: block;
   margin-left: auto;
   margin-right: auto;
+  max-width: 95%;
 }
 
 #Confirm_Container {
   position: relative;
-  top: 25vh;
+  top: 15vh;
 }
 
 #Confirm_Message {
