@@ -1,0 +1,20 @@
+_extends: private-global-settings
+
+repository:
+  allow_merge_commit: false
+
+branches:
+  - name: master
+    protection:
+      required_pull_request_reviews:
+        dismissal_restrictions:
+          teams: []
+      required_status_checks:
+        contexts: ["ci/circleci: test"]
+      required_signatures: true
+      restrictions:
+        teams: ["oasislabs/dev"]
+
+collaborators:
+  - username: vishwa-raman
+    permission: admin
