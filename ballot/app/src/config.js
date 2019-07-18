@@ -21,4 +21,4 @@ module.exports = {
   MNEMONIC,
   BYTECODE,
   BALLOT_ARGS,
-}
+};

@@ -11,13 +11,14 @@ export default new Vuex.Store({
     ballot: null,
   },
   mutations: {
+    /* eslint no-param-reassign: ["error", { "props": false }] */
     setBallot(state, ballot) {
       state.ballot = ballot;
     },
   },
   actions: {
     // Ballot Instantiation
-    async connectToOasis () {
+    async connectToOasis() {
       const wallet = oasis.Wallet.fromMnemonic(config.MNEMONIC);
       const gateway = new oasis.gateways.Web3Gateway(
         config.WEB3_GATEWAY_URL,
@@ -26,7 +27,7 @@ export default new Vuex.Store({
 
       oasis.setGateway(gateway);
     },
-    async deployService ({ commit }) {
+    async deployService({ commit }) {
       await this.dispatch('connectToOasis');
 
       const bytecode = await fetch(config.BYTECODE)
@@ -46,7 +47,7 @@ export default new Vuex.Store({
 
       commit('setBallot', ballot);
     },
-    async loadService ({ commit }, address) {
+    async loadService({ commit }, address) {
       await this.dispatch('connectToOasis');
 
       const ballot = await oasis.Service.at(address);
@@ -54,31 +55,31 @@ export default new Vuex.Store({
       commit('setBallot', ballot);
     },
     // Ballot API
-    async castVote ({ commit }, candidateNum) {
+    async castVote(candidateNum) {
       return this.state.ballot.vote(candidateNum, { gasLimit: '0xf42400' });
     },
-    async closeBallot () {
+    async closeBallot() {
       return this.state.ballot.close({ gasLimit: '0xf42400' });
     },
-    async isAdmin () {
+    async isAdmin() {
       return this.state.ballot.admin({ gasLimit: '0xf42400' });
     },
-    async getBallotID () {
+    async getBallotID() {
       return this.state.ballot.address;
     },
-    async getCandidates () {
+    async getCandidates() {
       return this.state.ballot.candidates({ gasLimit: '0xf42400' });
     },
-    async getDescription () {
+    async getDescription() {
       return this.state.ballot.description({ gasLimit: '0xf42400' });
     },
-    async getOpen () {
+    async getOpen() {
       return this.state.ballot.voting_open({ gasLimit: '0xf42400' });
     },
-    async getResults () {
+    async getResults() {
       return this.state.ballot.results({ gasLimit: '0xf42400' });
     },
-    async getWinner () {
+    async getWinner() {
       return this.state.ballot.winner({ gasLimit: '0xf42400' });
     },
   },
