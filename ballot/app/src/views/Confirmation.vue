@@ -17,29 +17,44 @@
           </div>
         </div>
         <div class="text-xs-center pt-4">
-          <template v-if="voteOpen">
+          <template v-if="open">
             <div id="Confirm_VoteOpenDisclaimer" class="pb-4">
               The results will be available when ballot closes. <br />
               We advocate for privacy and information disclosure.
             </div>
-            <v-btn id="Confirm_ButtonOpen">
-              View the result
+            <v-btn id="Confirm_ButtonDisabled">
+              View result
             </v-btn>
           </template>
           <template v-else>
             <v-btn
-              id="Confirm_ButtonClosed"
+              id="Confirm_ButtonEnabled"
               @click="$router.push({ name: 'results', query: $route.query })"
             >
-              View the result
+              View result
+            </v-btn>
+          </template>
+
+          <template v-if="admin">
+            <v-btn
+              id="Confirm_ButtonEnabled"
+              :loading="loading"
+              @click="close"
+              v-if="open"
+            >
+              Close vote
+            </v-btn>
+
+            <v-btn
+              id="Confirm_ButtonDisabled"
+              :loading="loading"
+              v-else
+            >
+              Close vote
             </v-btn>
           </template>
         </div>
       </v-card-text>
-
-      <v-card-actions>
-        
-      </v-card-actions>
     </v-card>
   </v-container>
 </template>
@@ -50,17 +65,33 @@ import { mapActions } from 'vuex';
 export default {
   name: 'Confirm',
   async created () {
-    this.voteOpen = await this.getOpen();
+    this.open = await this.getOpen();
+    this.admin = await this.isAdmin();
   },
   data () {
     return {
-      voteOpen: true,
+      admin: false,
+      loading: false,
+      open: true,
     };
   },
   methods: {
     ...mapActions([
+      'closeBallot',
+      'isAdmin',
       'getOpen',
     ]),
+    async close () {
+      this.loading = true;
+
+      // Close ballot
+      await this.closeBallot();
+
+      // Check if it was closed
+      this.open = await this.getOpen();
+
+      this.loading = false;
+    },
   },
 };
 </script>
@@ -91,13 +122,13 @@ export default {
   color: #334857;
 }
 
-#Confirm_ButtonClosed {
+#Confirm_ButtonDisabled {
   height: 38px;
   width: 139px;
 
-  background-color: $bright-blue;
+  background-color: #eaeef1;;
   border-radius: 3px;
-  color: $light-gray;
+  color: #c3c9cd;
 
   font-family: Sul Sans;
   font-size: 15px;
@@ -110,13 +141,13 @@ export default {
   box-shadow: none;
 }
 
-#Confirm_ButtonOpen {
+#Confirm_ButtonEnabled {
   height: 38px;
   width: 139px;
 
-  background-color: #eaeef1;;
+  background-color: $bright-blue;
   border-radius: 3px;
-  color: #c3c9cd;
+  color: $light-gray;
 
   font-family: Sul Sans;
   font-size: 15px;

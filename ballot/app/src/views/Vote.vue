@@ -81,7 +81,7 @@ export default {
       'getDescription',
       'getCandidates',
     ]),
-    async submit() {
+    async submit () {
       this.loading = true;
       await this.castVote(this.radios);
 

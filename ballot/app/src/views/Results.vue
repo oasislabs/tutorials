@@ -58,7 +58,13 @@ export default {
       .map((count, index) => [labels[index], count])
       .sort((a, b) => b[1] - a[1]);
 
-    this.chartOptions.labels = zip.map(pair => pair[0]);
+    // Initialize results chart
+    this.chartOptions = {
+      ...this.chartOptions,
+      ...{
+        labels: zip.map(pair => pair[0])
+      },
+    };
     this.series = zip.map(pair => pair[1] * 100 / totalVotes);
   },
   data () {
