@@ -42,14 +42,16 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
 export default {
   name: 'Results',
   async created () {
-    this.question = await getDescription();
+    this.question = await this.getDescription();
 
-    const labels = await getCandidates();
-    const series = await getResults();
-    
+    const labels = await this.getCandidates();
+    const series = await this.getResults();
+
     // Process results
     const totalVotes = series.reduce((total, votes) => total + votes, 0);
     const zip = series
@@ -104,19 +106,26 @@ export default {
       },
     };
   },
+  methods: {
+    ...mapActions([
+      'getDescription',
+      'getCandidates',
+      'getResults',
+    ]),
+  },
 };
 </script>
 
 <style scoped lang="scss">
-@import "../variables.scss";
+@import '~oasis-style/oasis.scss';
 
 .apexcharts-tooltip {
-  background-color: $darkgray;
-  color: $darkgray;
+  background-color: $dark-gray;
+  color: $dark-gray;
 }
 
 #Results_Card {
-  background-color: $lightgray;
+  background-color: $background-light-gray;
 
   display: block;
   margin-left: auto;

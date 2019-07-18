@@ -36,6 +36,7 @@
           </v-btn>
           <v-btn
             id="Vote_SelectedButton"
+            :loading="loading"
             @click="submit"
             v-else
           >
@@ -58,33 +59,44 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
 export default {
   name: 'Vote',
   async created () {
-    this.question = await getDescription();
-    this.options = await getCandidates();
+    this.question = await this.getDescription();
+    this.options = await this.getCandidates();
   },
   data () {
     return {
+      loading: false,
       options: [],
       question: '',
       radios: null,
     };
   },
   methods: {
+    ...mapActions([
+      'castVote',
+      'getDescription',
+      'getCandidates',
+    ]),
     async submit() {
-      await castVote(this.radios);
-      this.$router.push('/confirm');
+      this.loading = true;
+      await this.castVote(this.radios);
+
+      this.loading = false;
+      this.$router.push({ name: 'confirm', query: this.$route.query });
     },
   },
 };
 </script>
 
 <style scoped lang="scss">
-@import "../variables.scss";
+@import '~oasis-style/oasis.scss';
 
 #Vote_Card {
-  background-color: $lightgray;
+  background-color: $background-light-gray;
 
   display: block;
   margin-left: auto;
@@ -121,9 +133,9 @@ export default {
   height: 38px;
   width: 173px;
 
-  background-color: $brightblue;
+  background-color: $bright-blue;
   border-radius: 3px;
-  color: $lightgray;
+  color: $light-gray;
 
   font-family: Sul Sans;
   font-size: 15px;

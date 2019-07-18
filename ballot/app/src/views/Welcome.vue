@@ -15,7 +15,11 @@
       </v-card-text>
 
       <v-card-actions class="pl-3 pt-4">
-        <v-btn id="Welcome_Button" to="/vote">
+        <v-btn
+          id="Welcome_Button"
+          :loading="!ballot"
+          @click="$router.push({ name: 'vote', query: $route.query })"
+        >
           Participate in vote
         </v-btn>
       </v-card-actions>
@@ -24,21 +28,28 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 export default {
   name: 'Welcome',
+  computed: {
+    ...mapState([
+      'ballot',
+    ]),
+  },
 };
 </script>
 
 <style scoped lang="scss">
-@import "../variables.scss";
+@import '~oasis-style/oasis.scss';
 
 #Welcome_Button {
   height: 38px;
   width: 193px;
 
-  background-color: $brightblue;
+  background-color: $bright-blue;
   border-radius: 3px;
-  color: $lightgray;
+  color: $light-gray;
 
   font-family: Sul Sans;
   font-size: 15px;
@@ -52,7 +63,7 @@ export default {
 }
 
 #Welcome_Card {
-  background-color: $lightgray;
+  background-color: $background-light-gray;
 
   display: block;
   margin-left: auto;

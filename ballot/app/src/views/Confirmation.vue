@@ -17,7 +17,7 @@
           </div>
         </div>
         <div class="text-xs-center pt-4">
-          <template v-if="!voteOpen">
+          <template v-if="voteOpen">
             <div id="Confirm_VoteOpenDisclaimer" class="pb-4">
               The results will be available when ballot closes. <br />
               We advocate for privacy and information disclosure.
@@ -27,7 +27,10 @@
             </v-btn>
           </template>
           <template v-else>
-            <v-btn id="Confirm_ButtonClosed" to="/results">
+            <v-btn
+              id="Confirm_ButtonClosed"
+              @click="$router.push({ name: 'results', query: $route.query })"
+            >
               View the result
             </v-btn>
           </template>
@@ -42,24 +45,31 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
 export default {
   name: 'Confirm',
   async created () {
-    this.voteOpen = await getOpen();
+    this.voteOpen = await this.getOpen();
   },
   data () {
     return {
       voteOpen: true,
     };
   },
+  methods: {
+    ...mapActions([
+      'getOpen',
+    ]),
+  },
 };
 </script>
 
 <style scoped lang="scss">
-@import "../variables.scss";
+@import '~oasis-style/oasis.scss';
 
 #Confirm_Card {
-  background-color: $lightgray;
+  background-color: $background-light-gray;
 
   display: block;
   margin-left: auto;
@@ -85,9 +95,9 @@ export default {
   height: 38px;
   width: 139px;
 
-  background-color: $brightblue;
+  background-color: $bright-blue;
   border-radius: 3px;
-  color: $lightgray;
+  color: $light-gray;
 
   font-family: Sul Sans;
   font-size: 15px;
@@ -132,7 +142,6 @@ export default {
   text-align: center;
 
   color: #5B6872;
-
 }
 
 #Confirm_VoteOpenDisclaimer span {
