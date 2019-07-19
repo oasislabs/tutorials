@@ -130,41 +130,13 @@ export default {
 }
 
 #Confirm_ButtonDisabled {
-  height: 38px;
+  @extend .o-btn-disabled;
   width: 139px;
-
-  background-color: #eaeef1;;
-  border-radius: 3px;
-  color: #c3c9cd;
-
-  font-family: Sul Sans;
-  font-size: 15px;
-  font-weight: bold;
-  text-transform: none;
-  line-height: 18px;
-
-  -webkit-box-shadow: none;
-	-moz-box-shadow: none;
-  box-shadow: none;
 }
 
 #Confirm_ButtonEnabled {
-  height: 38px;
+  @extend .o-btn-primary;
   width: 139px;
-
-  background-color: $bright-blue;
-  border-radius: 3px;
-  color: $light-gray;
-
-  font-family: Sul Sans;
-  font-size: 15px;
-  font-weight: bold;
-  text-transform: none;
-  line-height: 18px;
-
-  -webkit-box-shadow: none;
-	-moz-box-shadow: none;
-  box-shadow: none;
 }
 
 #Confirm_SubmittedIcon {

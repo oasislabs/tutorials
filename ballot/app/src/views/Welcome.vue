@@ -44,22 +44,8 @@ export default {
 @import '~oasis-style/oasis.scss';
 
 #Welcome_Button {
-  height: 38px;
+  @extend .o-btn-primary;
   width: 193px;
-
-  background-color: $bright-blue;
-  border-radius: 3px;
-  color: $light-gray;
-
-  font-family: Sul Sans;
-  font-size: 15px;
-  font-weight: bold;
-  text-transform: none;
-  line-height: 18px;
-
-  -webkit-box-shadow: none;
-	-moz-box-shadow: none;
-	box-shadow: none;
 }
 
 #Welcome_Card {

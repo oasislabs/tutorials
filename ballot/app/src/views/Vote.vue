@@ -29,7 +29,6 @@
 
         <div class="text-xs-center">
           <v-btn id="Vote_UnselectedButton"
-            disabled
             v-if="radios === null"
           >
             Submit your vote
@@ -143,41 +142,13 @@ export default {
 }
 
 #Vote_SelectedButton {
-  height: 38px;
+  @extend .o-btn-primary;
   width: 173px;
-
-  background-color: $bright-blue;
-  border-radius: 3px;
-  color: $light-gray;
-
-  font-family: Sul Sans;
-  font-size: 15px;
-  font-weight: bold;
-  text-transform: none;
-  line-height: 18px;
-
-  -webkit-box-shadow: none;
-	-moz-box-shadow: none;
-  box-shadow: none;
 }
 
 #Vote_UnselectedButton {
-  height: 38px;
+  @extend .o-btn-disabled;
   width: 173px;
-
-  background-color: #eaeef1;;
-  border-radius: 3px;
-  color: #c3c9cd;
-
-  font-family: Sul Sans;
-  font-size: 15px;
-  font-weight: bold;
-  text-transform: none;
-  line-height: 18px;
-
-  -webkit-box-shadow: none;
-	-moz-box-shadow: none;
-  box-shadow: none;
 }
 
 #Vote_Warning {
