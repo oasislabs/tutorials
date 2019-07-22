@@ -5,7 +5,7 @@
 const WEB3_GATEWAY_URL = 'ws://localhost:8546';
 const DEVELOPER_GATEWAY_URL = 'http://localhost:1234';
 const MNEMONIC = 'range drive remove bleak mule satisfy mandate east lion minimum unfold ready';
-const WASM = './target/service/hello-world.wasm';
+const WASM = '../../service/target/service/hello-world.wasm';
 
 module.exports = {
   WEB3_GATEWAY_URL,
