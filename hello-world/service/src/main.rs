@@ -74,7 +74,7 @@ mod tests {
     fn test_paths() {
         let (_me, ctx) = create_account();
 
-        let mut hello_world = HelloWorld::new(&ctx).unwrap();
+        let mut hello_world = HelloWorld::new(&ctx);
 
         // One happy path.
         eprintln!(
