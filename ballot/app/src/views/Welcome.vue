@@ -20,7 +20,13 @@
           :loading="!ballot"
           @click="$router.push({ name: 'vote', query: $route.query })"
         >
-          Participate in vote
+          <img
+            id="Welcome_VoteIcon"
+            src="/assets/SecretBallot_vote.svg"
+          >
+          <span class="pl-2">
+            Participate in vote
+          </span>
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -78,5 +84,12 @@ export default {
   font-size: 22px;
 
   letter-spacing: -0.488889px;
+}
+
+#Welcome_VoteIcon {
+  height: 22px;
+  width: 20px;
+
+  color: white;
 }
 </style>

@@ -22,7 +22,7 @@
           {{ question }}
         </div>
 
-        <div class="Results_ResultsContainer">
+        <div class="Results_ResultsContainer" ref="ResultsContainer">
           <template
             v-for="(option, index) of chartOptions.labels"
             class="Results_Template"
@@ -89,6 +89,16 @@ export default {
       question: '',
       series: [],
       chartOptions: {
+        chart: {
+          events: {
+            dataPointMouseEnter: (_event, _chartContext, config) => {
+
+            },
+            dataPointMouseLeave: (event, chartContext, config) => {
+
+            },
+          },
+        },
         labels: [],
         legend: {
           show: false,

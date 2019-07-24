@@ -13,6 +13,7 @@
     "core-js": "^2.6.5",
     "eslint-loader": "^2.1.2",
     "node-sass": "^4.12.0",
+    "oasis-style": "^1.0.0-rc1",
     "raw-loader": "^3.0.0",
     "sass": "^1.22.2",
     "sass-loader": "^7.1.0",

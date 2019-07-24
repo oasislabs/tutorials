@@ -11,7 +11,7 @@
       >
         <img
           id="SecretBallot_ToolbarIcon"
-          src="/assets/SecretBallot_icon.svg"
+          src="/assets/SecretBallot_main.svg"
         >
         <b class="pl-2">Secret Ballot</b>
       </v-toolbar-title>

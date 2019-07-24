@@ -9,7 +9,7 @@
           <div>
             <img
               id="Confirm_SubmittedIcon"
-              src="/assets/SecretBallot_submitted.svg"
+              src="/assets/SecretBallot_confirm.svg"
             >
           </div>
           <div class="pt-2">
