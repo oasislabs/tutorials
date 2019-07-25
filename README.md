@@ -1,2 +1,2 @@
 # oasis-tutorials
-The examples and tutorials that we expose to external developers
+Tutorials for Beginner, Intermediate and Advanced Developers with sample services on Oasis Network
