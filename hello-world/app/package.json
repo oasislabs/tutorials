@@ -1,6 +1,9 @@
 {
   "name": "hello-world",
   "version": "1.0.0",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "directories": {
     "test": "test"
   },

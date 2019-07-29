@@ -3,7 +3,6 @@ name = "hello-world"
 version = "0.1.0"
 authors = ["Oasis Labs <feedback@oasislabs.com>"]
 edition = "2018"
-publish = false
 
 [dependencies]
 map_vec = { version = "0.2", features = ["serde"] }
