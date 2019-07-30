@@ -8,11 +8,13 @@ branches:
     protection:
       required_pull_request_reviews:
         dismissal_restrictions:
+          users: []
           teams: []
       required_status_checks:
         contexts: ["ci/circleci: test"]
       required_signatures: true
       restrictions:
+        users: []
         teams: ["oasislabs/dev"]
 
 collaborators:
