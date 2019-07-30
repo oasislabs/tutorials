@@ -27,12 +27,10 @@
     "typescript": "^3.5.3"
   },
   "dependencies": {
-    "@oasislabs/client": "^1.0.0-rc.6"
+    "@oasislabs/client": "^1.0.0-rc.8"
   },
   "jest": {
-    "transform": {
-      ".(ts|tsx)": "ts-jest"
-    },
+    "preset": "ts-jest",
     "testEnvironment": "node"
   }
 }
