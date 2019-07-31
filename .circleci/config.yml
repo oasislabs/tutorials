@@ -1,31 +1,29 @@
 version: 2.1
 
 jobs:
-  setup-oasis-dev:
+  build_test:
     docker:
-      - image: circleci/node:10-stretch
-
-    working_directory: ~/repo
-
+      - image: oasislabs/rust:latest
+    environment:
+        PATH: /root/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     steps:
       - checkout
+      - run:
+          name: Install tools
+          command: cargo install oasis-build oasis-cli --debug
+      - run:
+          name: Build service
+          working_directory: hello-world/service
+          command: oasis build
+      - run:
+          name: Test app
+          working_directory: hello-world/app
+          command: oasis test
 
-      -run:
-        name: Setup Rust and Oasis tools
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- -y
-        export PATH=~/.cargo/bin:$PATH
-        rustup default nightly-2019-07-04
-        rustup target add wasm32-wasi
-        cargo install oasis-build
-        cargo install oasis-cli
-
-  test-tutorials:
-      -run:
-        name: Test flows
 
 workflows:
-  version: 2.1
+  version: 2
 
   test:
     jobs:
-      - setup-oasis-dev
+      - build_test
