@@ -18,35 +18,30 @@ type Result<T> = std::result::Result<T, String>; // define our own result type, 
 
 impl Ballot {
     /// Constructs a new `Ballot`.
-    pub fn new(ctx: &Context, description: String, candidates: Vec<String>) -> Result<Self> {
-        Ok(Self {
+    pub fn new(ctx: &Context, description: String, candidates: Vec<String>) -> Self {
+        Self {
             description,
             tally: vec![0; candidates.len()],
             candidates,
             accepting_votes: true,
             admin: ctx.sender(),
             voters: Map::new(),
-        })
+        }
     }
 
     /// Returns the candidates being voted upon.
-    pub fn candidates(&self, _ctx: &Context) -> Result<Vec<&str>> {
-        Ok(self.candidates.iter().map(String::as_ref).collect())
+    pub fn candidates(&self, _ctx: &Context) -> Vec<&str> {
+        self.candidates.iter().map(String::as_ref).collect()
     }
 
     /// Returns the description of this ballot.
-    pub fn description(&self, _ctx: &Context) -> Result<&str> {
-        Ok(&self.description)
+    pub fn description(&self, _ctx: &Context) -> &str {
+        &self.description
     }
 
     /// Returns whether voting is still open.
-    pub fn voting_open(&self, _ctx: &Context) -> Result<bool> {
-        Ok(self.accepting_votes)
-    }
-
-    /// Returns whether you are the ballot admin.
-    pub fn admin(&self, ctx: &Context) -> Result<bool> {
-        Ok(self.admin.to_string() == ctx.sender().to_string())
+    pub fn voting_open(&self, _ctx: &Context) -> bool {
+        self.accepting_votes
     }
 
     /// Cast a vote for a candidate.
@@ -63,8 +58,7 @@ impl Ballot {
         if let Some(prev_vote) = self.voters.insert(ctx.sender(), candidate_num) {
             self.tally[prev_vote as usize] -= 1;
         }
-        self.tally[candidate_num as usize] =
-            self.tally[candidate_num as usize].checked_add(1).unwrap();
+        self.tally[candidate_num as usize] += 1;
         Ok(())
     }
 
@@ -130,11 +124,11 @@ mod tests {
         let description = "What's for dinner?";
         let candidates = vec!["beef".to_string(), "yogurt".to_string()];
         let mut ballot =
-            Ballot::new(&admin_ctx, description.to_string(), candidates.clone()).unwrap();
+            Ballot::new(&admin_ctx, description.to_string(), candidates.clone());
 
-        assert_eq!(ballot.description(&admin_ctx).unwrap(), description);
-        assert_eq!(ballot.candidates(&admin_ctx).unwrap(), candidates);
-        assert_eq!(ballot.voting_open(&admin_ctx).unwrap(), true);
+        assert_eq!(ballot.description(&admin_ctx), description);
+        assert_eq!(ballot.candidates(&admin_ctx), candidates);
+        assert_eq!(ballot.voting_open(&admin_ctx), true);
 
         // Can't get winner before voting has closed.
         assert!(ballot.winner(&voter_ctx).is_err());
@@ -150,7 +144,7 @@ mod tests {
         // Votes can't be cast after ballot has closed.
         ballot.vote(&admin_ctx, 0).unwrap_err();
 
-        assert_eq!(ballot.voting_open(&voter_ctx).unwrap(), false);
+        assert_eq!(ballot.voting_open(&voter_ctx), false);
         assert_eq!(ballot.winner(&voter_ctx).unwrap(), 1);
         assert_eq!(ballot.results(&voter_ctx).unwrap(), vec![0, 2]);
     }
