@@ -4,8 +4,6 @@ extern crate serde;
 use map_vec::{map::Entry, Map};
 use oasis_std::Context;
 
-pub type Result<T> = std::result::Result<T, Error>;
-
 #[derive(Serialize, Deserialize, Debug, Eq, PartialEq)]
 pub enum Error {
     UnsupportedLanguage,
@@ -44,7 +42,7 @@ impl HelloWorld {
         _ctx: &Context,
         language: String,
         hello_world: String,
-    ) -> Result<()> {
+    ) -> Result<(), Error> {
         eprintln!("Adding \"{}\" for \"{}\"", hello_world, language);
         match self.hello_worlds.entry(language) {
             Entry::Vacant(vacant) => vacant.insert(hello_world),
@@ -64,7 +62,7 @@ mod tests {
     use oasis_std::{Address, Context};
 
     /// Creates a new account and a `Context` with the new account as the sender.
-    fn create_account() -> (Address, Context) {
+    fn create_account_ctx() -> (Address, Context) {
         let addr = oasis_test::create_account(0 /* initial balance */);
         let ctx = Context::default().with_sender(addr).with_gas(100_000);
         (addr, ctx)
@@ -72,7 +70,7 @@ mod tests {
 
     #[test]
     fn test_paths() {
-        let (_me, ctx) = create_account();
+        let (_me, ctx) = create_account_ctx();
 
         let mut hello_world = HelloWorld::new(&ctx);
 
