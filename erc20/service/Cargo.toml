@@ -1,0 +1,15 @@
+[package]
+name = "erc20"
+version = "0.1.0"
+authors = ["Oasis Labs <feedback@oasislabs.com>"]
+edition = "2018"
+publish = false
+
+[dependencies]
+failure = "0.1"
+map_vec = { version = "0.2", features = ["serde"] }
+oasis-std = "0.2"
+serde = { version = "1.0", features = ["derive"] }
+
+[dev-dependencies]
+oasis-test = "0.2"
