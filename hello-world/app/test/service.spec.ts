@@ -6,6 +6,19 @@ describe('HelloWorld Test', () => {
   let service;
 
   beforeAll(async () => {
+    // Wallet private key.
+    const privateKey = '<your private key>';
+
+    // Wallet for signing and paying for transactions.
+    const wallet = new oasis.Wallet(privateKey);
+
+    // Etheruem gateway responsible for signing transactions.
+    const gateway = new oasis.gateways.Web3Gateway('wss://web3.devnet.oasiscloud-staging.net/ws', wallet);
+
+    // Configure the gateway to use.
+    oasis.setGateway(gateway);
+
+    // Deploy the service
     service = await oasis.workspace.HelloWorld.deploy({
       header: {confidential: false},
     });
