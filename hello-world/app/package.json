@@ -27,7 +27,7 @@
     "typescript": "^3.5.3"
   },
   "dependencies": {
-    "@oasislabs/client": "^1.0.0-rc.11"
+    "@oasislabs/client": "^1.0.0-rc.13"
   },
   "jest": {
     "preset": "ts-jest",
