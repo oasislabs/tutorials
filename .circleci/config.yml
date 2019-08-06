@@ -6,11 +6,15 @@ jobs:
       - image: oasislabs/rust:latest
     environment:
         PATH: /root/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+        DEBIAN_FRONTEND: noninteractive
     steps:
       - checkout
       - run:
           name: Install tools
-          command: cargo install oasis-build oasis-cli --debug
+          command: |
+            cargo install oasis-build oasis-cli oasis-chain --debug
+            apt-get -qq update
+            apt-get -qq install nodejs npm
       - run:
           name: Build service
           working_directory: hello-world/service
@@ -18,7 +22,9 @@ jobs:
       - run:
           name: Test app
           working_directory: hello-world/app
-          command: oasis test
+          command: |
+            oasis-chain &
+            oasis test
 
 
 workflows:
