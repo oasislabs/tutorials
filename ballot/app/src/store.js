@@ -2,13 +2,23 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 import oasis from '@oasislabs/client';
-import config from './config';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    args: [
+      'Which starter Pokemon is the best?',
+      [
+        'Bulbasaur',
+        'Charmander',
+        'Squirtle',
+      ],
+    ],
     ballot: null,
+    bytecode: '/assets/bytecode/ballot.wasm',
+    gateway: 'ws://localhost:8546',
+    mnemonic: 'range drive remove bleak mule satisfy mandate east lion minimum unfold ready',
   },
   mutations: {
     /* eslint no-param-reassign: ["error", { "props": false }] */
@@ -19,9 +29,9 @@ export default new Vuex.Store({
   actions: {
     // Ballot Instantiation
     async connectToOasis() {
-      const wallet = oasis.Wallet.fromMnemonic(config.MNEMONIC);
+      const wallet = oasis.Wallet.fromMnemonic(this.state.mnemonic);
       const gateway = new oasis.gateways.Web3Gateway(
-        config.WEB3_GATEWAY_URL,
+        this.state.gateway,
         wallet,
       );
 
@@ -30,7 +40,7 @@ export default new Vuex.Store({
     async deployService({ commit }) {
       await this.dispatch('connectToOasis');
 
-      const bytecode = await fetch(config.BYTECODE)
+      const bytecode = await fetch(this.state.bytecode)
         .then(response => response.body)
         .then(stream => new Response(stream))
         .then(async (response) => {
@@ -40,7 +50,7 @@ export default new Vuex.Store({
 
       const ballot = await oasis.deploy({
         bytecode,
-        arguments: config.BALLOT_ARGS,
+        arguments: this.state.args,
         options: { gasLimit: '0xf42400' }, // TODO: Remove this, and other gasLimits
       });
 
@@ -60,11 +70,8 @@ export default new Vuex.Store({
     async closeBallot() {
       return this.state.ballot.close({ gasLimit: '0xf42400' });
     },
-    async isAdmin() {
-      return this.state.ballot.admin({ gasLimit: '0xf42400' });
-    },
     async getBallotID() {
-      return this.state.ballot.address;
+      return this.state.ballot._inner.address;
     },
     async getCandidates() {
       return this.state.ballot.candidates({ gasLimit: '0xf42400' });

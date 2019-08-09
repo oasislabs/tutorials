@@ -32,12 +32,12 @@ const router = new Router({
       name: 'results',
       component: Results,
     },
-    {
-      path: '*',
-      name: 'welcome',
-      component: Welcome,
-    },
   ],
+});
+
+router.replace({
+  path: '*',
+  redirect: '/',
 });
 
 export default router;
