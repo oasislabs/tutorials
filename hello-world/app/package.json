@@ -5,17 +5,20 @@
   "module": "dist/index.js",
   "typings": "dist/index.d.ts",
   "directories": {
-    "test": "test"
+    "test": "test",
+    "bin": "scripts"
   },
   "scripts": {
     "build": "tsc",
     "test": "jest",
+    "deploy": "node scripts/deploy_service.js",
     "clean": "rimraf dist",
     "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
     "lint:fix": "npm run-script lint -- --fix"
   },
   "devDependencies": {
     "@types/jest": "^24.0.15",
+    "chalk": "^2.4.2",
     "jest": "^24.8.0",
     "prettier": "^1.18.2",
     "rimraf": "^2.6.3",
