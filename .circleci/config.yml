@@ -12,9 +12,9 @@ jobs:
       - run:
           name: Install tools
           command: |
-            cargo install oasis-build oasis-cli oasis-chain --debug
             apt-get -qq update
-            apt-get -qq install nodejs npm
+            apt-get -qq install python rsync curl git build-essential
+            curl --proto '=https' --tlsv1.2 -sSL https://get.oasis.dev | python
       - run:
           name: Build service
           working_directory: hello-world/service
@@ -23,7 +23,7 @@ jobs:
           name: Test app
           working_directory: hello-world/app
           command: |
-            oasis-chain &
+            oasis chain &
             oasis test
 
 
