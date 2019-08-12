@@ -13,7 +13,7 @@ jobs:
           name: Install tools
           command: |
             apt-get -qq update
-            apt-get -qq install python rsync curl git build-essential
+            apt-get -qq install python curl git gcc
             curl --proto '=https' --tlsv1.2 -sSL https://get.oasis.dev | python
       - run:
           name: Build service
@@ -23,7 +23,6 @@ jobs:
           name: Test app
           working_directory: hello-world/app
           command: |
-            oasis chain &
             oasis test
 
 
