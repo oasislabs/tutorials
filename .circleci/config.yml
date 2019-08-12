@@ -15,6 +15,7 @@ jobs:
             apt-get -qq update
             apt-get -qq install python curl git gcc
             curl --proto '=https' --tlsv1.2 -sSL https://get.oasis.dev | python
+            source ~/.bashrc
       - run:
           name: Build service
           working_directory: hello-world/service
