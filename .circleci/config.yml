@@ -4,6 +4,9 @@ jobs:
   build_test:
     docker:
       - image: oasislabs/rust:latest
+    environment:
+      PATH: /root/.local/bin:/root/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      LD_LIBRARY_PATH: /root/.rustup/toolchains/nightly-2019-08-01-x86_64-unknown-linux-gnu/lib
     steps:
       - checkout
       - run:
@@ -12,7 +15,6 @@ jobs:
             apt-get -qq update
             apt-get -qq install python curl git gcc
             curl --proto '=https' --tlsv1.2 -sSL https://get.oasis.dev | python
-            export PATH=/root/.local/bin:/root/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       - run:
           name: Build service
           working_directory: hello-world/service
