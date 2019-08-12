@@ -16,12 +16,16 @@ jobs:
             apt-get -qq install python curl git gcc
             curl --proto '=https' --tlsv1.2 -sSL https://get.oasis.dev | python
       - run:
-          name: Build service
+          name: Build Hello World
           working_directory: hello-world/service
           command: oasis build
       - run:
-          name: Test app
-          working_directory: hello-world/app
+          name: Build Secret Ballot
+          working_directory: secret-ballot/service
+          command: oasis build
+      - run:
+          name: Test Secret Ballot
+          working_directory: secret-ballot/service
           command: |
             oasis test
 
