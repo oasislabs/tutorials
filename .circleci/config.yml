@@ -12,7 +12,7 @@ jobs:
             apt-get -qq update
             apt-get -qq install python curl git gcc
             curl --proto '=https' --tlsv1.2 -sSL https://get.oasis.dev | python
-            export PATH=$PATH:$HOME/.local/bin
+            export PATH=/root/.local/bin:/root/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       - run:
           name: Build service
           working_directory: hello-world/service
