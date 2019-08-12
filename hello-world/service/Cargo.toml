@@ -11,3 +11,7 @@ serde = { version = "1.0", features = ["derive"] }
 
 [dev-dependencies]
 oasis-test = "0.2"
+
+[profile.release]
+opt-level = "z"
+lto = true
