@@ -35,7 +35,7 @@
             </v-btn>
           </template>
 
-          <template v-if="admin">
+          <template>
             <v-btn
               id="Confirm_ButtonEnabled"
               :loading="loading"
@@ -71,11 +71,9 @@ export default {
     await this.loadService(this.$route.query.id);
 
     this.open = await this.getOpen();
-    this.admin = await this.isAdmin();
   },
   data () {
     return {
-      admin: false,
       loading: false,
       open: true,
     };
@@ -84,7 +82,6 @@ export default {
     ...mapActions([
       'loadService',
       'closeBallot',
-      'isAdmin',
       'getOpen',
     ]),
     async close () {
