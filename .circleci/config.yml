@@ -5,26 +5,32 @@ jobs:
     docker:
       - image: oasislabs/rust:latest
     environment:
-        PATH: /root/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-        DEBIAN_FRONTEND: noninteractive
+      PATH: /root/.local/bin:/root/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      LD_LIBRARY_PATH: /root/.rustup/toolchains/nightly-2019-08-01-x86_64-unknown-linux-gnu/lib
     steps:
       - checkout
       - run:
-          name: Install tools
-          command: |
-            cargo install oasis-build oasis-cli oasis-chain --debug
-            apt-get -qq update
-            apt-get -qq install nodejs npm
+        name: Install tools
+        command: |
+          apt-get -qq update
+          apt-get -qq install python curl git gcc
+          curl --proto '=https' --tlsv1.2 -sSL https://get.oasis.dev | python
       - run:
-          name: Build service
-          working_directory: hello-world/service
+        name: Build Hello World
+        working_directory: hello-world/service
+        command: oasis build
+      - run:
+        name: Test Hello World
+        working_directory: hello-world/service
+        command: oasis test
+      - run:
+        name: Build Secret Ballot
+          working_directory: secret-ballot/service
           command: oasis build
       - run:
-          name: Test app
-          working_directory: hello-world/app
-          command: |
-            oasis-chain &
-            oasis test
+          name: Test Secret Ballot
+          working_directory: secret-ballot/service
+          command: oasis test
 
 
 workflows:
