@@ -25,12 +25,12 @@ jobs:
         command: oasis test
       - run:
         name: Build Secret Ballot
-          working_directory: secret-ballot/service
-          command: oasis build
+        working_directory: ballot/service
+        command: oasis build
       - run:
-          name: Test Secret Ballot
-          working_directory: secret-ballot/service
-          command: oasis test
+        name: Test Secret Ballot
+        working_directory: ballot/service
+        command: oasis test
 
 
 workflows:
