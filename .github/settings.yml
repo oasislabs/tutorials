@@ -11,7 +11,7 @@ branches:
           users: []
           teams: []
       required_status_checks:
-        contexts: ["ci/circleci: test"]
+        contexts: ["ci/circleci: build_test"]
       required_signatures: true
       restrictions:
         users: []
