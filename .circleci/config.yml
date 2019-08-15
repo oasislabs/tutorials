@@ -10,31 +10,28 @@ jobs:
     steps:
       - checkout
       - run:
-        name: Install tools
-        command: |
-          apt-get -qq update
-          apt-get -qq install python curl git gcc
-          curl --proto '=https' --tlsv1.2 -sSL https://get.oasis.dev | python
+          name: Install tools
+          command: |
+            apt-get -qq update
+            apt-get -qq install python curl git gcc
+            curl --proto '=https' --tlsv1.2 -sSL https://get.oasis.dev | python
       - run:
-        name: Build Hello World
-        working_directory: hello-world/service
-        command: |
-        oasis build
+          name: Build Hello World
+          working_directory: hello-world/service
+          command: oasis build
       - run:
-        name: Test Hello World
-        working_directory: hello-world/service
-        command: |
-          oasis test
+          name: Test Hello World
+          working_directory: hello-world/service
+          command: oasis test
       - run:
-        name: Build Secret Ballot
-        working_directory: ballot/service
-        command: |
-          oasis build
+          name: Build Secret Ballot
+          working_directory: ballot/service
+          command: oasis build
       - run:
-        name: Test Secret Ballot
-        working_directory: ballot/service
-        command: |
-        oasis test
+          name: Test Secret Ballot
+          working_directory: ballot/service
+          command: oasis test
+
 
 workflows:
   version: 2
