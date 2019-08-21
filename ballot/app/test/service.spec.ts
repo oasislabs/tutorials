@@ -6,8 +6,9 @@ describe('Ballot', () => {
   let service;
 
   beforeAll(async () => {
-    service = await oasis.workspace.Ballot.deploy({
-      header: {confidential: false},
+    service = await oasis.workspace.Ballot.deploy('Secret Ballot', ['Alice', 'Bob'], {
+      header: { confidential: false },
+      options: { gasLimit: '0xe79732' },
     });
   });
 
