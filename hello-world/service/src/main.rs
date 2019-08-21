@@ -32,7 +32,7 @@ impl HelloWorld {
     }
 
     /// Get hello world taking as input the desired language.
-    pub fn say_hello(&mut self, _ctx: &Context, language: String) -> Option<&String> {
+    pub fn say_hello(&self, _ctx: &Context, language: String) -> Option<&String> {
         self.hello_worlds.get(&language)
     }
 
