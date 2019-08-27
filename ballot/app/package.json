@@ -1,6 +1,6 @@
 {
-  "name": "secret_ballot_app",
-  "version": "0.1.0",
+  "name": "ballot",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",

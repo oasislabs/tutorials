@@ -6,7 +6,7 @@ jobs:
       - image: oasislabs/rust:latest
     environment:
       PATH: /root/.local/bin:/root/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-      LD_LIBRARY_PATH: /root/.rustup/toolchains/nightly-2019-08-01-x86_64-unknown-linux-gnu/lib
+      LD_LIBRARY_PATH: /root/.rustup/toolchains/nightly-2019-08-26-x86_64-unknown-linux-gnu/lib
     steps:
       - checkout
       - run:
@@ -20,14 +20,17 @@ jobs:
           working_directory: hello-world/service
           command: oasis build
       - run:
+          name: Test Hello World
+          working_directory: hello-world/service
+          command: oasis test
+      - run:
           name: Build Secret Ballot
-          working_directory: secret-ballot/service
+          working_directory: ballot/service
           command: oasis build
       - run:
           name: Test Secret Ballot
-          working_directory: secret-ballot/service
-          command: |
-            oasis test
+          working_directory: ballot/service
+          command: oasis test
 
 
 workflows:
