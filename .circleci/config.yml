@@ -33,9 +33,18 @@ jobs:
           command: oasis test
   build:
     docker:
-      - image: node:latest
+      - image: oasislabs/rust:latest
+    environment:
+      PATH: /root/.local/bin:/root/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      LD_LIBRARY_PATH: /root/.rustup/toolchains/nightly-2019-08-26-x86_64-unknown-linux-gnu/lib
     steps:
       - checkout
+      - run:
+          name: Install tools
+          command: |
+            apt-get -qq update
+            apt-get -qq install python curl git gcc
+            curl --proto '=https' --tlsv1.2 -sSL https://get.oasis.dev | python
       - run:
           name: Build Ballot Service
           working_directory: ballot/service
