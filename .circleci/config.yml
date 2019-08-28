@@ -1,12 +1,17 @@
 version: 2.1
 
-jobs:
-  build_test:
+executors:
+  rust:
     docker:
       - image: oasislabs/rust:latest
     environment:
       PATH: /root/.local/bin:/root/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       LD_LIBRARY_PATH: /root/.rustup/toolchains/nightly-2019-08-26-x86_64-unknown-linux-gnu/lib
+    resource_class: xlarge
+
+jobs:
+  build_test:
+    executor: rust
     steps:
       - checkout
       - run:
@@ -32,11 +37,7 @@ jobs:
           working_directory: ballot/service
           command: oasis test
   build:
-    docker:
-      - image: oasislabs/rust:latest
-    environment:
-      PATH: /root/.local/bin:/root/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-      LD_LIBRARY_PATH: /root/.rustup/toolchains/nightly-2019-08-26-x86_64-unknown-linux-gnu/lib
+    executor: rust
     steps:
       - checkout
       - run:
@@ -59,9 +60,7 @@ jobs:
       - run:
           name: Build Ballot App
           working_directory: ballot/app
-          command: |
-            npm install
-            npm run build
+          command: oasis build
 
 workflows:
   version: 2
