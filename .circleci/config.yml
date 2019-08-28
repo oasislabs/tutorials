@@ -9,6 +9,16 @@ executors:
       LD_LIBRARY_PATH: /root/.rustup/toolchains/nightly-2019-08-26-x86_64-unknown-linux-gnu/lib
     resource_class: xlarge
 
+commands:
+  install_oasis:
+    steps:
+      - run:
+          name: Install Oasis
+          command: |
+            apt-get -qq update
+            apt-get -qq install python curl git gcc
+            curl --proto '=https' --tlsv1.2 -sSL https://get.oasis.dev | python
+
 jobs:
   build_test:
     executor: rust
@@ -16,10 +26,8 @@ jobs:
       - checkout
       - run:
           name: Install tools
-          command: |
-            apt-get -qq update
-            apt-get -qq install python curl git gcc
-            curl --proto '=https' --tlsv1.2 -sSL https://get.oasis.dev | python
+          command: install_oasis
+          
       - run:
           name: Build Hello World
           working_directory: hello-world/service
@@ -36,16 +44,14 @@ jobs:
           name: Test Secret Ballot
           working_directory: ballot/service
           command: oasis test
-  build:
+  build_ballot:
     executor: rust
     steps:
       - checkout
       - run:
           name: Install tools
           command: |
-            apt-get -qq update
-            apt-get -qq install python curl git gcc
-            curl --proto '=https' --tlsv1.2 -sSL https://get.oasis.dev | python
+            install_oasis
             npm install @vue/cli
       - run:
           name: Build Ballot Service
@@ -68,4 +74,4 @@ workflows:
   test:
     jobs:
       - build_test
-      - build
+      - build_ballot
