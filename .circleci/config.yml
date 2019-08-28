@@ -31,7 +31,25 @@ jobs:
           name: Test Secret Ballot
           working_directory: ballot/service
           command: oasis test
-
+  build:
+    docker:
+      - image: node:latest
+    steps:
+      - checkout
+      - run:
+          name: Build Ballot Service
+          working_directory: ballot/service
+          command: oasis build
+      - run:
+          name: Setup Ballot App
+          working_directory: ballot
+          command: |
+            mkdir app/public/assets/bytecode
+            cp service/target/service/ballot.wasm app/public/assets/bytecode
+      - run:
+          name: Build Ballot App
+          working_directory: ballot/app
+          command: npm run build
 
 workflows:
   version: 2
@@ -39,3 +57,4 @@ workflows:
   test:
     jobs:
       - build_test
+      - build
