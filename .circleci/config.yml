@@ -24,10 +24,7 @@ jobs:
     executor: rust
     steps:
       - checkout
-      - run:
-          name: Install tools
-          command: install_oasis
-          
+      - install_oasis
       - run:
           name: Build Hello World
           working_directory: hello-world/service
@@ -48,10 +45,10 @@ jobs:
     executor: rust
     steps:
       - checkout
+      - install_oasis
       - run:
-          name: Install tools
+          name: Install Vue
           command: |
-            install_oasis
             npm install @vue/cli
       - run:
           name: Build Ballot Service
