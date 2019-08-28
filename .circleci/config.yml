@@ -45,6 +45,7 @@ jobs:
             apt-get -qq update
             apt-get -qq install python curl git gcc
             curl --proto '=https' --tlsv1.2 -sSL https://get.oasis.dev | python
+            npm install -g @vue/cli
       - run:
           name: Build Ballot Service
           working_directory: ballot/service
@@ -58,7 +59,9 @@ jobs:
       - run:
           name: Build Ballot App
           working_directory: ballot/app
-          command: npm run build
+          command: |
+            npm install
+            npm run build
 
 workflows:
   version: 2
