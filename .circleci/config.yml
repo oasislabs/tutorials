@@ -13,7 +13,7 @@ commands:
   install_oasis:
     steps:
       - run:
-          name: Install Oasis
+          name: Install Tools
           command: |
             apt-get -qq update
             apt-get -qq install python curl git gcc
