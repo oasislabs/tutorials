@@ -41,6 +41,14 @@ jobs:
           name: Test Secret Ballot
           working_directory: ballot/service
           command: oasis test
+      - run:
+          name: Build MessageBoard
+          working_directory: message-board/service
+          command: oasis build
+      - run:
+          name: Test MessageBoard
+          working_directory: message-board/service
+          command: oasis test
   build_ballot:
     executor: rust
     steps:
