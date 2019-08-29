@@ -65,6 +65,9 @@ jobs:
           working_directory: ballot/app
           command: oasis build
 
+      - store_artifacts:
+          path: ballot/app/dist
+
 workflows:
   version: 2
 
