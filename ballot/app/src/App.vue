@@ -32,7 +32,7 @@
         <v-flex xs12>
           <v-card
             id="SecretBallot_FooterCard"
-            align-center
+            class="text-center"
             flat
           >
             <v-card-text>
