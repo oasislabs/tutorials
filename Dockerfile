@@ -5,6 +5,7 @@ RUN mkdir /service
 COPY ./ballot/service /service
 WORKDIR /service
 
+RUN curl --proto '=https' --tlsv1.2 -sSL https://get.oasis.dev | python
 RUN oasis build
 
 # Build application
