@@ -5,7 +5,14 @@ RUN mkdir /service
 COPY ./ballot/service /service
 WORKDIR /service
 
-RUN curl --proto '=https' --tlsv1.2 -sSL https://get.oasis.dev | python
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -qq install \
+    curl \
+    python3
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly && \
+    . /root/.cargo/env && \
+    rustup component add rustfmt && \
+    rustup target add wasm32-wasi wasm32-unknown-unknown && \
+    echo "source ~/.cargo/env" >> ~/.bashrc
 RUN oasis build
 
 # Build application
