@@ -16,14 +16,14 @@ export default new Vuex.Store({
       ],
     ],
     ballot: null,
-    bytecode: '/assets/bytecode/ballot.wasm',
+    bytecode: '/assets/ballot.wasm',
     gateway: 'ws://localhost:8546',
     mnemonic: 'range drive remove bleak mule satisfy mandate east lion minimum unfold ready',
     /*
      * Note: If you are copying this template you should modify it to interact with services
      * via the Oasis developer gateway, as opposed to a locally-running blockchain. Your Oasis
      * client will sign transactions for you locally in-browser using a Deoxysii key.
-     * 
+     *
      * https://github.com/oasislabs/deoxysii
      */
   },
