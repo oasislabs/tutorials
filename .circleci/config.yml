@@ -55,6 +55,7 @@ jobs:
       - setup_remote_docker
       - run:
           name: Build Tutorials Docker image
+          working_directory: .circleci
           command: docker build -t $IMAGE_NAME:latest .
 
 workflows:
