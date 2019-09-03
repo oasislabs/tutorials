@@ -7,7 +7,7 @@ WORKDIR /service
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -qq install \
     curl \
-    python3
+    python
 RUN curl --proto '=https' --tlsv1.2 -sSL https://get.oasis.dev | python
 RUN oasis build
 
