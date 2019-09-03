@@ -56,25 +56,6 @@ jobs:
       - run:
           name: Build Tutorials Docker image
           command: docker build -t $IMAGE_NAME:latest .
-      - install_oasis
-      - run:
-          name: Install Vue
-          command: |
-            npm install @vue/cli
-      - run:
-          name: Build Ballot Service
-          working_directory: ballot/service
-          command: oasis build
-      - run:
-          name: Setup Ballot App
-          working_directory: ballot
-          command: |
-            mkdir app/public/assets/bytecode
-            cp service/target/service/ballot.wasm app/public/assets/bytecode
-      - run:
-          name: Build Ballot App
-          working_directory: ballot/app
-          command: oasis build
 
 workflows:
   version: 2
