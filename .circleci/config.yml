@@ -18,6 +18,7 @@ commands:
             apt-get -qq update
             apt-get -qq install python curl git gcc
             curl --proto '=https' --tlsv1.2 -sSL https://get.oasis.dev | python
+
   build_and_test_service:
     description: "Builds and tests a tutorial Rust service"
     parameters:
@@ -45,9 +46,16 @@ jobs:
       - build_and_test_service:
           tutorial: ballot
   build_ballot:
-    executor: rust
+    environment:
+      IMAGE_NAME: oasislabs/tutorials
+    docker:
+      - image: circleci/buildpack-deps:stretch
     steps:
       - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Tutorials Docker image
+          command: docker build -t $IMAGE_NAME:latest .
       - install_oasis
       - run:
           name: Install Vue
@@ -67,9 +75,6 @@ jobs:
           name: Build Ballot App
           working_directory: ballot/app
           command: oasis build
-
-      - store_artifacts:
-          path: ballot/app/dist
 
 workflows:
   version: 2
