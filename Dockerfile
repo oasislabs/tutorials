@@ -9,7 +9,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -qq install \
     curl \
     python
 RUN curl --proto '=https' --tlsv1.2 -sSL https://get.oasis.dev | python \
-    echo "source ~/.cargo/env" >> ~/.bashrc \
+    /bin/bash -c  "source ~/.local/bin/oasis" >> ~/.bashrc \
     oasis build
 
 # Build application
