@@ -18,6 +18,20 @@ commands:
             apt-get -qq update
             apt-get -qq install python curl git gcc
             curl --proto '=https' --tlsv1.2 -sSL https://get.oasis.dev | python
+  build_and_test_service:
+    description: "Builds and tests a tutorial Rust service"
+    parameters:
+      tutorial:
+        type: string
+    steps:
+      - run:
+          name: Build << parameters.tutorial >>
+          working_directory: << parameters.tutorial >>/service
+          command: oasis build
+      - run:
+          name: Test << parameters.tutorial >>
+          working_directory: << parameters.tutorial >>/service
+          command: oasis test
 
 jobs:
   build_test:
@@ -25,22 +39,12 @@ jobs:
     steps:
       - checkout
       - install_oasis
-      - run:
-          name: Build Hello World
-          working_directory: hello-world/service
-          command: oasis build
-      - run:
-          name: Test Hello World
-          working_directory: hello-world/service
-          command: oasis test
-      - run:
-          name: Build Secret Ballot
-          working_directory: ballot/service
-          command: oasis build
-      - run:
-          name: Test Secret Ballot
-          working_directory: ballot/service
-          command: oasis test
+      - build_and_test_service:
+          tutorial: hello-world
+      - build_and_test_service:
+          tutorial: ballot
+      - build_and_test_service:
+          tutorial: message-board
   build_ballot:
     executor: rust
     steps:
