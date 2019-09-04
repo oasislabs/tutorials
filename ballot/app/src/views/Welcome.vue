@@ -52,8 +52,6 @@ export default {
 #Welcome_Button {
   @extend .o-btn-primary;
   width: 193px;
-  margin: auto;
-  display: inline-block;
 }
 
 #Welcome_Card {
@@ -65,7 +63,8 @@ export default {
 }
 
 #Welcome_Container {
-  text-align: center;
+  position: relative;
+  top: 20vh;
 }
 
 #Welcome_Description {
