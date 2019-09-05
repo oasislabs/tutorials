@@ -19,54 +19,43 @@ commands:
             apt-get -qq install python curl git gcc
             curl --proto '=https' --tlsv1.2 -sSL https://get.oasis.dev | python
 
+  build_and_test_service:
+    description: "Builds and tests a tutorial Rust service"
+    parameters:
+      tutorial:
+        type: string
+    steps:
+      - run:
+          name: Build << parameters.tutorial >>
+          working_directory: << parameters.tutorial >>/service
+          command: oasis build
+      - run:
+          name: Test << parameters.tutorial >>
+          working_directory: << parameters.tutorial >>/service
+          command: oasis test
+
+
 jobs:
   build_test:
     executor: rust
     steps:
       - checkout
       - install_oasis
-      - run:
-          name: Build Hello World
-          working_directory: hello-world/service
-          command: oasis build
-      - run:
-          name: Test Hello World
-          working_directory: hello-world/service
-          command: oasis test
-      - run:
-          name: Build Secret Ballot
-          working_directory: ballot/service
-          command: oasis build
-      - run:
-          name: Test Secret Ballot
-          working_directory: ballot/service
-          command: oasis test
+      - build_and_test_service:
+          tutorial: hello-world
+      - build_and_test_service:
+          tutorial: ballot
   build_ballot:
-    executor: rust
+    environment:
+      IMAGE_NAME: oasislabs/tutorials
+    docker:
+      - image: circleci/buildpack-deps:stretch
     steps:
       - checkout
-      - install_oasis
+      - setup_remote_docker
       - run:
-          name: Install Vue
-          command: |
-            npm install @vue/cli
-      - run:
-          name: Build Ballot Service
-          working_directory: ballot/service
-          command: oasis build
-      - run:
-          name: Setup Ballot App
-          working_directory: ballot
-          command: |
-            mkdir app/public/assets/bytecode
-            cp service/target/service/ballot.wasm app/public/assets/bytecode
-      - run:
-          name: Build Ballot App
-          working_directory: ballot/app
-          command: oasis build
-
-      - store_artifacts:
-          path: ballot/app/dist
+          name: Build Tutorials Docker image
+          command: docker build -t $IMAGE_NAME:latest .
 
 workflows:
   version: 2
