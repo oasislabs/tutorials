@@ -16,15 +16,15 @@ describe('HelloWorld Test', () => {
   });
 
   it('known greeting', async () => {
-    let greeting = await service.say_hello('sl');
+    let greeting = await service.sayHello('sl');
     expect(greeting).toEqual('Pozdravljen, svet!');
   });
 
   it('insert new greeting in Samoan', async () => {
-    let greeting = await service.say_hello('ws');
+    let greeting = await service.sayHello('ws');
     expect(greeting).toBeNull();
-    await service.add_hello('ws', 'alofa fiafia i le lalolagi!');
-    greeting = await service.say_hello('ws');
+    await service.addHello('ws', 'alofa fiafia i le lalolagi!');
+    greeting = await service.sayHello('ws');
     expect(greeting).toEqual('alofa fiafia i le lalolagi!');
   });
 
