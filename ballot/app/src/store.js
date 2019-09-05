@@ -87,7 +87,7 @@ export default new Vuex.Store({
       return this.state.ballot.description({ gasLimit: '0xf42400' });
     },
     async getOpen() {
-      return this.state.ballot.voting_open({ gasLimit: '0xf42400' });
+      return this.state.ballot.votingOpen({ gasLimit: '0xf42400' });
     },
     async getResults() {
       return this.state.ballot.results({ gasLimit: '0xf42400' });
