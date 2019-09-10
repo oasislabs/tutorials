@@ -31,16 +31,16 @@ jobs:
           command: oasis build
       - run:
           name: Test Hello World
-          working_directory: hello-world/service
-          command: oasis test
+          working_directory: hello-world
+          command: oasis-chain > oasis-chain.log & oasis test
       - run:
           name: Build Secret Ballot
           working_directory: ballot/service
           command: oasis build
       - run:
           name: Test Secret Ballot
-          working_directory: ballot/service
-          command: oasis test
+          working_directory: ballot
+          command: oasis-chain > oasis-chain.log & oasis test
   build_ballot:
     executor: rust
     steps:
