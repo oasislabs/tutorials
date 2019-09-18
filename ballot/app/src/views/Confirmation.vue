@@ -69,8 +69,6 @@ export default {
       return;
     }
     await this.loadService(this.$route.query.id);
-
-    this.open = await this.getOpen();
   },
   data () {
     return {
