@@ -17,8 +17,8 @@ export default new Vuex.Store({
     ],
     ballot: null,
     bytecode: '/assets/ballot.wasm',
-    gateway: 'ws://localhost:8546',
-    mnemonic: 'range drive remove bleak mule satisfy mandate east lion minimum unfold ready',
+    gateway: 'https://gateway.devnet.oasiscloud.io',
+    token: 'AAAAAhq2tOs8hDVZLUob7LDnb1SsBS2ZGV3zIguKznK5jv/J',
     /*
      * Note: If you are copying this template you should modify it to interact with services
      * via the Oasis developer gateway, as opposed to a locally-running blockchain. Your Oasis
@@ -36,12 +36,11 @@ export default new Vuex.Store({
   actions: {
     // Ballot Instantiation
     async connectToOasis() {
-      const wallet = oasis.Wallet.fromMnemonic(this.state.mnemonic);
-      const gateway = new oasis.gateways.Web3Gateway(
-        this.state.gateway,
-        wallet,
-      );
+      const headers = new Map();
+      headers.set('X-OASIS-LOGIN-TOKEN', this.state.token);
+      headers.set('X-OASIS-SESSION-KEY', 'ballot-session');
 
+      const gateway = new oasis.gateways.Gateway(this.state.gateway, null, { headers });
       oasis.setGateway(gateway);
     },
     async deployService({ commit }) {
@@ -55,9 +54,8 @@ export default new Vuex.Store({
           return new Uint8Array(serviceBinary);
         });
 
-      const ballot = await oasis.deploy({
+      const ballot = await oasis.deploy(...this.state.args, {
         bytecode,
-        arguments: this.state.args,
         gasLimit: '0xf42400',
       });
 
@@ -72,28 +70,28 @@ export default new Vuex.Store({
     },
     // Ballot API
     async castVote({_}, candidateNum) {
-      return this.state.ballot.vote(candidateNum, { gasLimit: '0xf42400' });
+      return this.state.ballot.vote(candidateNum);
     },
     async closeBallot() {
-      return this.state.ballot.close({ gasLimit: '0xf42400' });
+      return this.state.ballot.close();
     },
     async getBallotID() {
       return this.state.ballot._inner.address;
     },
     async getCandidates() {
-      return this.state.ballot.candidates({ gasLimit: '0xf42400' });
+      return this.state.ballot.candidates();
     },
     async getDescription() {
-      return this.state.ballot.description({ gasLimit: '0xf42400' });
+      return this.state.ballot.description();
     },
     async getOpen() {
-      return this.state.ballot.votingOpen({ gasLimit: '0xf42400' });
+      return this.state.ballot.votingOpen();
     },
     async getResults() {
-      return this.state.ballot.results({ gasLimit: '0xf42400' });
+      return this.state.ballot.results();
     },
     async getWinner() {
-      return this.state.ballot.winner({ gasLimit: '0xf42400' });
+      return this.state.ballot.winner();
     },
   },
 });
