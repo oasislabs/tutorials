@@ -47,8 +47,8 @@ export default new Vuex.Store({
       await this.dispatch('connectToOasis');
 
       const bytecode = await fetch(this.state.bytecode)
-        .then(response => response.body)
-        .then(stream => new Response(stream))
+        .then((response) => response.body)
+        .then((stream) => new Response(stream))
         .then(async (response) => {
           const serviceBinary = await response.arrayBuffer();
           return new Uint8Array(serviceBinary);
@@ -69,13 +69,14 @@ export default new Vuex.Store({
       commit('setBallot', ballot);
     },
     // Ballot API
-    async castVote({_}, candidateNum) {
+    async castVote(_context, candidateNum) {
       return this.state.ballot.vote(candidateNum);
     },
     async closeBallot() {
       return this.state.ballot.close();
     },
     async getBallotID() {
+      // eslint-disable-next-line
       return this.state.ballot._inner.address;
     },
     async getCandidates() {

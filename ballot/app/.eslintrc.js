@@ -3,11 +3,12 @@ module.exports = {
     browser: true,
     es6: true,
   },
-  extends: 'airbnb-base',
+  extends: ['plugin:vue/base'],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
   },
+  parser: 'vue-eslint-parser',
   parserOptions: {
     ecmaVersion: 2018,
     sourceType: 'module',
@@ -15,6 +16,4 @@ module.exports = {
   plugins: [
     'vue',
   ],
-  rules: {
-  },
 };
