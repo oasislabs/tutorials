@@ -29,14 +29,14 @@ impl Ballot {
         }
     }
 
-    /// Returns the candidates being voted upon.
-    pub fn candidates(&self, _ctx: &Context) -> Vec<&str> {
-        self.candidates.iter().map(String::as_ref).collect()
-    }
-
     /// Returns the description of this ballot.
     pub fn description(&self, _ctx: &Context) -> &str {
         &self.description
+    }
+
+    /// Returns the candidates being voted upon.
+    pub fn candidates(&self, _ctx: &Context) -> Vec<&str> {
+        self.candidates.iter().map(String::as_ref).collect()
     }
 
     /// Returns whether voting is still open.
