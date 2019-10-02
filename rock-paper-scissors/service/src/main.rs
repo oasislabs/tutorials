@@ -113,24 +113,55 @@ mod tests {
     fn functionality() {
         let (_player, player_ctx) = create_account();
         let (_challenger, challenger_ctx) = create_account();
-
-
         let mut game = RockPaperScissors::new(&player_ctx);
 
         assert_eq!(game.can_play(&player_ctx), true); // they can play in any order tbh
-
         // player 1 plays rock
         println!("{}", game.play(&player_ctx, "stan".to_string(), 1).unwrap());
-
         // anyone can now challenge
         assert_eq!(game.can_play(&player_ctx), true);
+        // challenger challenges, plays rock
+        println!("{}", game.challenge(&challenger_ctx, "nick".to_string(), 1).unwrap());
+        // nobody can challenge anymore
+        assert_eq!(game.can_play(&player_ctx), false);
+        println!("{}", game.reveal(&player_ctx).unwrap());
+    }
+
+    #[test]
+    fn repeats() {
+        let (_player, player_ctx) = create_account();
+        let (_challenger, challenger_ctx) = create_account();
+        let mut game = RockPaperScissors::new(&player_ctx);
+
+        assert_eq!(game.can_play(&player_ctx), true); // they can play in any order
+        assert!(game.reveal(&player_ctx).is_err());
+
+        // stan plays first, plays rock
+        println!("{}", game.play(&player_ctx, "stan".to_string(), 1).unwrap());
+        // you can't play again
+        assert!(game.play(&player_ctx, "mal".to_string(), 2).is_err());
 
         // challenger challenges, plays rock
         println!("{}", game.challenge(&challenger_ctx, "nick".to_string(), 1).unwrap());
-
+        // you can't challenge again
+        assert!(game.challenge(&challenger_ctx, "mal".to_string(), 2).is_err());
         // nobody can challenge anymore
         assert_eq!(game.can_play(&player_ctx), false);
+    }
 
-        println!("{}", game.reveal(&player_ctx).unwrap());
+    #[test]
+    fn bad_moves() {
+        let (_player, player_ctx) = create_account();
+        let (_challenger, challenger_ctx) = create_account();
+        let mut game = RockPaperScissors::new(&player_ctx);
+
+        // you can't play an invalid move
+        assert!(game.play(&player_ctx, "mal".to_string(), 0).is_err());
+        // you can't play an invalid move
+        assert!(game.play(&player_ctx, "mal".to_string(), 5).is_err());
+        // you can't challenge an invalid move
+        assert!(game.challenge(&challenger_ctx, "mal".to_string(), 0).is_err());
+        // you can't challenge an invalid move
+        assert!(game.challenge(&challenger_ctx, "mal".to_string(), 6).is_err());
     }
 }
