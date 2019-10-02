@@ -1,0 +1,22 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - name: Install Oasis
+        run: curl --proto '=https' --tlsv1.2 -sSL https://get.oasis.dev | python - --speedrun
+      - name: Build and test service
+        run: |
+          export PATH=~/.local/bin:-~/.cargo/bin:$PATH
+          export LD_LIBRARY_PATH=$(rustc --print sysroot)/lib:$LD_LIBRARY_PATH
+          oasis build
+          oasis chain >& oasis.log &
+          oasis test
