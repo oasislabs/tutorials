@@ -22,7 +22,7 @@ trait ValidMove {
 impl ValidMove for Move {
     fn compare(&self, challenger: &Self) -> i32 {
         if self.eq(&Move::Null) || challenger.eq(&Move::Null) {
-            return 0;
+            panic!("Trying to compare Null move!");
         }
         else if self.eq(&Move::Rock) {
             if challenger.eq(&Move::Rock) {
@@ -175,16 +175,16 @@ mod tests {
         assert_eq!(game.can_play(&player_ctx), true);
         assert_eq!(game.can_challenge(&player_ctx), true);
         // player 1 plays rock
-        println!("{}", game.play(&player_ctx, "stan".to_string(), Move::Rock).unwrap());
+        game.play(&player_ctx, "stan".to_string(), Move::Rock);
         // anyone can now challenge
         assert_eq!(game.can_play(&player_ctx), false);
         // challenger challenges, plays rock
         assert_eq!(game.can_challenge(&player_ctx), true);
         // challenger challenges, plays rock
-        println!("{}", game.challenge(&challenger_ctx, "nick".to_string(), Move::Rock).unwrap());
+        game.challenge(&challenger_ctx, "nick".to_string(), Move::Rock);
         // nobody can challenge anymore
         assert_eq!(game.can_challenge(&player_ctx), false);
-        println!("{}", game.reveal(&player_ctx).unwrap());
+        assert_eq!(game.reveal(&player_ctx).unwrap(), "stan played Rock and nick played Rock. Tie!");
     }
 
     #[test]
@@ -197,12 +197,12 @@ mod tests {
         assert!(game.reveal(&player_ctx).is_err());
 
         // stan plays first, plays rock
-        println!("{}", game.play(&player_ctx, "stan".to_string(), Move::Paper).unwrap());
+        game.play(&player_ctx, "stan".to_string(), Move::Paper);
         // you can't play again
         assert!(game.play(&player_ctx, "mal".to_string(), Move::Scissors).is_err());
 
         // challenger challenges, plays rock
-        println!("{}", game.challenge(&challenger_ctx, "nick".to_string(), Move::Paper).unwrap());
+        game.challenge(&challenger_ctx, "nick".to_string(), Move::Paper);
         // you can't challenge again
         assert!(game.challenge(&challenger_ctx, "mal".to_string(), Move::Scissors).is_err());
         // nobody can challenge anymore
