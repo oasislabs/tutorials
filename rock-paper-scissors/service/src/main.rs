@@ -1,16 +1,76 @@
 use oasis_std::{Address, Context};
+#[macro_use]
+extern crate serde;
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq)]
+pub enum Move {
+    Null,
+    Rock,
+    Paper,
+    Scissors,
+}
+
+trait ValidMove {
+    fn compare(&self, challenger: &Self) -> i32 {
+        return 0;
+    }
+    fn is_valid(&self) -> bool {
+        return true;
+    }
+}
+
+impl ValidMove for Move {
+    fn compare(&self, challenger: &Self) -> i32 {
+        if self.eq(&Move::Null) || challenger.eq(&Move::Null) {
+            return 0;
+        }
+        else if self.eq(&Move::Rock) {
+            if challenger.eq(&Move::Rock) {
+                return 0;
+            } else if challenger.eq(&Move::Scissors) {
+                return 1;
+            } else {
+                return -1;
+            }
+        }
+        else if self.eq(&Move::Paper) {
+            if challenger.eq(&Move::Rock) {
+                return 1;
+            } else if challenger.eq(&Move::Scissors) {
+                return -1;
+            } else {
+                return 0;
+            }
+        }
+        else {
+            if challenger.eq(&Move::Rock) {
+                return -1;
+            } else if challenger.eq(&Move::Scissors) {
+                return 0;
+            } else  {
+                return 1;
+            }
+        }
+    }
+
+    fn is_valid(&self) -> bool {
+        if !self.eq(&Move::Rock) && !self.eq(&Move::Paper) && !self.eq(&Move::Scissors) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+}
 
 #[derive(oasis_std::Service)]
 struct RockPaperScissors {
     player_name: String,
-    player_move: u32, // TODO would be better as an enum?
-    // 1 = rock, 2 = paper, 3 = scissors
+    player_move: Move, // TODO would be better as an enum?
     challenger_name: String,
-    challenger_move: u32,
-    // 1 = rock, 2 = paper, 3 = scissors
-    open: bool, // whether or not someone can challenge. true = player has played. false = nobody has played or just finished.
+    challenger_move: Move,
+    played: bool, // whether or not someone can challenge. true = player has played. false = nobody has played or just finished.
+    challenged: bool,
 }
-
 
 type Result<T> = std::result::Result<T, String>;
 
@@ -19,72 +79,69 @@ impl RockPaperScissors {
     pub fn new(_ctx: &Context) -> Self {
         Self {
             player_name: "".to_string(),
-            player_move: 0,
+            player_move: Move::Null,
             challenger_name: "".to_string(),
-            challenger_move: 0,
-            open: true,
+            challenger_move: Move::Null,
+            played: false,
+            challenged: false,
         }
 
     }
 
     pub fn can_play(&self, _ctx: &Context) -> bool {
-        return self.open;
+        return !self.played;
+    }
+
+    pub fn can_challenge(&self, _ctx: &Context) -> bool {
+        return !self.challenged;
     }
 
     pub fn reveal(&self, _ctx: &Context) -> Result<String> {
-        let map = vec!["None".to_string(), "Rock".to_string(), "Paper".to_string(), "Scissors".to_string()];
-        if self.open {
+        // let map = vec!["None".to_string(), "Rock".to_string(), "Paper".to_string(), "Scissors".to_string()];
+        if !self.played || !self.challenged {
             return Err("The game hasn't finished yet. You can query scores by calling scores().".to_string())
         }
-        if self.player_move == self.challenger_move {
-            let x: String = format!("{} played {} and {} played {}. Tie!", self.player_name, map[self.player_move as usize], self.challenger_name, map[self.challenger_move as usize]);
+        let result:i32 = self.player_move.compare(&self.challenger_move);
+        if result == 0 {
+            let x: String = format!("{} played {:?} and {} played {:?}. Tie!", self.player_name, self.player_move, self.challenger_name, self.challenger_move);
             return Ok(x);
         }
-        if self.player_move > self.challenger_move {
-            let x: String = format!("{} played {} and {} played {}. Player Wins!", self.player_name, map[self.player_move as usize], self.challenger_name, map[self.challenger_move as usize]);
+        if result == 1 {
+            let x: String = format!("{} played {:?} and {} played {:?}. Player Wins!", self.player_name, self.player_move, self.challenger_name, self.challenger_move );
             return Ok(x);
         }
-        if self.player_move == 1 && self.challenger_move == 3 {
-            let x: String = format!("{} played {} and {} played {}. Player Wins!", self.player_name, map[self.player_move as usize], self.challenger_name, map[self.challenger_move as usize]);
-            return Ok(x);
-        }
-        let x: String = format!("{} played {} and {} played {}. Challenger Wins!", self.player_name, map[self.player_move as usize], self.challenger_name, map[self.challenger_move as usize]);
+        // result == -1
+        let x: String = format!("{} played {:?} and {} played {:?}. Challenger Wins!", self.player_name, self.player_move, self.challenger_name, self.challenger_move);
         return Ok(x);
     }
 
-    pub fn play(&mut self, _ctx: &Context, p_name: String, p_move: u32) -> Result<String> {
-        if !self.open {
-            return Err("The game has ended.".to_string());
-        }
-        if self.player_move > 0 {
+    pub fn play(&mut self, _ctx: &Context, p_name: String, p_move: Move) -> Result<String> {
+        if self.played {
             return Err("Someone already played.".to_string());
         }
-        if p_move < 1 || p_move > 3 {
-            return Err("Invalid move.".to_string());
+        if !p_move.is_valid() {
+            return Err("Not a valid move.".to_string());
         }
         self.player_move = p_move;
         self.player_name = p_name;
-        if self.player_move > 0 && self.challenger_move > 0 {
-            self.open = false;
+        self.played = true;
+        if self.played && self.challenged {
             return Ok("Both players have played. Use reveal() to see what both players' moves were.".to_string());
         }
         Ok(format!("Player {} has played.", self.player_name))
     }
 
-    pub fn challenge(&mut self, _ctx: &Context, c_name: String, c_move: u32) -> Result<String> {
-        if !self.open {
-            return Err("The game has ended.".to_string());
-        }
-        if self.challenger_move > 0 {
+    pub fn challenge(&mut self, _ctx: &Context, c_name: String, c_move: Move) -> Result<String> {
+        if self.challenged {
             return Err("Someone already challenged.".to_string());
         }
-        if c_move < 1 || c_move > 3 {
-            return Err("Invalid move.".to_string());
+        if !c_move.is_valid() {
+            return Err("Not a valid move.".to_string());
         }
         self.challenger_move = c_move;
         self.challenger_name = c_name;
-        if self.player_move > 0 && self.challenger_move > 0 {
-            self.open = false;
+        self.challenged = true;
+        if self.played && self.challenged {
             return Ok("Both players have played. Use reveal() to see what both players' moves were.".to_string());
         }
         Ok(format!("Player {} has played.", self.challenger_name))
@@ -115,15 +172,18 @@ mod tests {
         let (_challenger, challenger_ctx) = create_account();
         let mut game = RockPaperScissors::new(&player_ctx);
 
-        assert_eq!(game.can_play(&player_ctx), true); // they can play in any order tbh
-        // player 1 plays rock
-        println!("{}", game.play(&player_ctx, "stan".to_string(), 1).unwrap());
-        // anyone can now challenge
         assert_eq!(game.can_play(&player_ctx), true);
-        // challenger challenges, plays rock
-        println!("{}", game.challenge(&challenger_ctx, "nick".to_string(), 1).unwrap());
-        // nobody can challenge anymore
+        assert_eq!(game.can_challenge(&player_ctx), true);
+        // player 1 plays rock
+        println!("{}", game.play(&player_ctx, "stan".to_string(), Move::Rock).unwrap());
+        // anyone can now challenge
         assert_eq!(game.can_play(&player_ctx), false);
+        // challenger challenges, plays rock
+        assert_eq!(game.can_challenge(&player_ctx), true);
+        // challenger challenges, plays rock
+        println!("{}", game.challenge(&challenger_ctx, "nick".to_string(), Move::Rock).unwrap());
+        // nobody can challenge anymore
+        assert_eq!(game.can_challenge(&player_ctx), false);
         println!("{}", game.reveal(&player_ctx).unwrap());
     }
 
@@ -137,14 +197,14 @@ mod tests {
         assert!(game.reveal(&player_ctx).is_err());
 
         // stan plays first, plays rock
-        println!("{}", game.play(&player_ctx, "stan".to_string(), 1).unwrap());
+        println!("{}", game.play(&player_ctx, "stan".to_string(), Move::Paper).unwrap());
         // you can't play again
-        assert!(game.play(&player_ctx, "mal".to_string(), 2).is_err());
+        assert!(game.play(&player_ctx, "mal".to_string(), Move::Scissors).is_err());
 
         // challenger challenges, plays rock
-        println!("{}", game.challenge(&challenger_ctx, "nick".to_string(), 1).unwrap());
+        println!("{}", game.challenge(&challenger_ctx, "nick".to_string(), Move::Paper).unwrap());
         // you can't challenge again
-        assert!(game.challenge(&challenger_ctx, "mal".to_string(), 2).is_err());
+        assert!(game.challenge(&challenger_ctx, "mal".to_string(), Move::Scissors).is_err());
         // nobody can challenge anymore
         assert_eq!(game.can_play(&player_ctx), false);
     }
@@ -156,12 +216,8 @@ mod tests {
         let mut game = RockPaperScissors::new(&player_ctx);
 
         // you can't play an invalid move
-        assert!(game.play(&player_ctx, "mal".to_string(), 0).is_err());
-        // you can't play an invalid move
-        assert!(game.play(&player_ctx, "mal".to_string(), 5).is_err());
+        assert!(game.play(&player_ctx, "mal".to_string(), Move::Null).is_err());
         // you can't challenge an invalid move
-        assert!(game.challenge(&challenger_ctx, "mal".to_string(), 0).is_err());
-        // you can't challenge an invalid move
-        assert!(game.challenge(&challenger_ctx, "mal".to_string(), 6).is_err());
+        assert!(game.challenge(&challenger_ctx, "mal".to_string(), Move::Null).is_err());
     }
 }
