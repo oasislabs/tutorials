@@ -99,7 +99,7 @@ impl RockPaperScissors {
         if !self.played || !self.challenged {
             return Err(Error::GameNotFinished);
         }
-        let result:i32 = self.player_move.compare(&self.challenger_move);
+        let result = self.player_move.compare(&self.challenger_move);
         if result == 0 {
             return Ok(format!("{} played {:?} and {} played {:?}. Tie!", self.player_name, self.player_move, self.challenger_name, self.challenger_move));
         }
