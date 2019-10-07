@@ -39,7 +39,7 @@ export default new Vuex.Store({
       const headers = new Map();
       headers.set('X-OASIS-SESSION-KEY', 'ballot-session');
 
-      const gateway = new oasis.gateways.Gateway(this.state.gateway, this.state.token, {headers});
+      const gateway = new oasis.gateways.Gateway(this.state.gateway, this.state.token, { headers });
       oasis.setGateway(gateway);
     },
     async deployService({ commit }) {
