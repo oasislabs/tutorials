@@ -2,6 +2,16 @@ use oasis_std::{Address, Context};
 #[macro_use]
 extern crate serde;
 
+#[derive(oasis_std::Service)]
+struct RockPaperScissors {
+    player_name: String,
+    player_move: Move, // TODO would be better as an enum?
+    challenger_name: String,
+    challenger_move: Move,
+    played: bool, // whether or not someone can challenge. true = player has played. false = nobody has played or just finished.
+    challenged: bool,
+}
+
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq)]
 pub enum Move {
     Null,
@@ -10,16 +20,7 @@ pub enum Move {
     Scissors,
 }
 
-trait ValidMove {
-    fn compare(&self, challenger: &Self) -> i32 {
-        return 0;
-    }
-    fn is_valid(&self) -> bool {
-        return true;
-    }
-}
-
-impl ValidMove for Move {
+impl Move {
     fn compare(&self, challenger: &Self) -> i32 {
         if self.eq(&Move::Null) || challenger.eq(&Move::Null) {
             panic!("Trying to compare Null move!");
@@ -62,17 +63,15 @@ impl ValidMove for Move {
     }
 }
 
-#[derive(oasis_std::Service)]
-struct RockPaperScissors {
-    player_name: String,
-    player_move: Move, // TODO would be better as an enum?
-    challenger_name: String,
-    challenger_move: Move,
-    played: bool, // whether or not someone can challenge. true = player has played. false = nobody has played or just finished.
-    challenged: bool,
+#[derive(Serialize, Deserialize, Debug)]
+pub enum Error {
+    GameNotFinished,
+    AlreadyPlayed,
+    AlreadyChallenged,
+    InvalidMove
 }
 
-type Result<T> = std::result::Result<T, String>;
+type Result<T> = std::result::Result<T, Error>;
 
 impl RockPaperScissors {
 
@@ -97,30 +96,26 @@ impl RockPaperScissors {
     }
 
     pub fn reveal(&self, _ctx: &Context) -> Result<String> {
-        // let map = vec!["None".to_string(), "Rock".to_string(), "Paper".to_string(), "Scissors".to_string()];
         if !self.played || !self.challenged {
-            return Err("The game hasn't finished yet. You can query scores by calling scores().".to_string())
+            return Err(Error::GameNotFinished);
         }
         let result:i32 = self.player_move.compare(&self.challenger_move);
         if result == 0 {
-            let x: String = format!("{} played {:?} and {} played {:?}. Tie!", self.player_name, self.player_move, self.challenger_name, self.challenger_move);
-            return Ok(x);
+            return Ok(format!("{} played {:?} and {} played {:?}. Tie!", self.player_name, self.player_move, self.challenger_name, self.challenger_move));
         }
         if result == 1 {
-            let x: String = format!("{} played {:?} and {} played {:?}. Player Wins!", self.player_name, self.player_move, self.challenger_name, self.challenger_move );
-            return Ok(x);
+            return Ok(format!("{} played {:?} and {} played {:?}. Player Wins!", self.player_name, self.player_move, self.challenger_name, self.challenger_move));
         }
         // result == -1
-        let x: String = format!("{} played {:?} and {} played {:?}. Challenger Wins!", self.player_name, self.player_move, self.challenger_name, self.challenger_move);
-        return Ok(x);
+        Ok(format!("{} played {:?} and {} played {:?}. Challenger Wins!", self.player_name, self.player_move, self.challenger_name, self.challenger_move))
     }
 
     pub fn play(&mut self, _ctx: &Context, p_name: String, p_move: Move) -> Result<String> {
         if self.played {
-            return Err("Someone already played.".to_string());
+            return Err(Error::AlreadyPlayed);
         }
         if !p_move.is_valid() {
-            return Err("Not a valid move.".to_string());
+            return Err(Error::InvalidMove);
         }
         self.player_move = p_move;
         self.player_name = p_name;
@@ -133,10 +128,10 @@ impl RockPaperScissors {
 
     pub fn challenge(&mut self, _ctx: &Context, c_name: String, c_move: Move) -> Result<String> {
         if self.challenged {
-            return Err("Someone already challenged.".to_string());
+            return Err(Error::AlreadyChallenged);
         }
         if !c_move.is_valid() {
-            return Err("Not a valid move.".to_string());
+            return Err(Error::InvalidMove);
         }
         self.challenger_move = c_move;
         self.challenger_name = c_name;
