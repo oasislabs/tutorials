@@ -1,7 +1,8 @@
-#[macro_use]
+use std::cmp::Ordering;
+
 use oasis_std::{Address, Context};
 use serde::{Deserialize, Serialize};
-use std::cmp::Ordering;
+
 
 #[derive(oasis_std::Service)]
 struct RockPaperScissors {
@@ -50,11 +51,11 @@ impl RockPaperScissors {
     }
 
     pub fn can_play(&self, _ctx: &Context) -> bool {
-        return self.player_move.is_none();
+        self.player_move.is_none()
     }
 
     pub fn can_challenge(&self, _ctx: &Context) -> bool {
-        return self.challenger_move.is_none();
+        self.challenger_move.is_none()
     }
 
     pub fn reveal(&self, _ctx: &Context) -> Result<String> {
@@ -66,19 +67,19 @@ impl RockPaperScissors {
         let result = p_move.compare(&c_move);
         match result {
             Ordering::Greater => {
-                return Ok(format!(
+                Ok(format!(
                     "{} played {:?} and {} played {:?}. {} Wins!",
                     self.player_name, p_move, self.challenger_name, c_move, self.player_name
                 ))
             }
             Ordering::Equal => {
-                return Ok(format!(
+                Ok(format!(
                     "{} played {:?} and {} played {:?}. Tie!",
                     self.player_name, p_move, self.challenger_name, c_move
                 ))
             }
             Ordering::Less => {
-                return Ok(format!(
+                Ok(format!(
                     "{} played {:?} and {} played {:?}. {} Wins!",
                     self.player_name, p_move, self.challenger_name, c_move, self.challenger_name
                 ))
