@@ -1,6 +1,7 @@
 #[macro_use]
 use oasis_std::{Address, Context};
 use serde::{Serialize, Deserialize};
+use std::cmp::Ordering;
 
 #[derive(oasis_std::Service)]
 struct RockPaperScissors {
@@ -18,34 +19,42 @@ pub enum Move {
 }
 
 impl Move {
-    fn compare(&self, challenger: &Self) -> i32 {
-        if self.eq(&Move::Rock) {
-            if challenger.eq(&Move::Rock) {
-                return 0;
-            } else if challenger.eq(&Move::Scissors) {
-                return 1;
-            } else {
-                return -1;
-            }
-        }
-        else if self.eq(&Move::Paper) {
-            if challenger.eq(&Move::Rock) {
-                return 1;
-            } else if challenger.eq(&Move::Scissors) {
-                return -1;
-            } else {
-                return 0;
-            }
-        }
-        else {
-            if challenger.eq(&Move::Rock) {
-                return -1;
-            } else if challenger.eq(&Move::Scissors) {
-                return 0;
-            } else  {
-                return 1;
-            }
-        }
+    // fn compare(&self, challenger: &Self) -> i32 {
+    //     if self.eq(&Move::Rock) {
+    //         if challenger.eq(&Move::Rock) {
+    //             return 0;
+    //         } else if challenger.eq(&Move::Scissors) {
+    //             return 1;
+    //         } else {
+    //             return -1;
+    //         }
+    //     }
+    //     else if self.eq(&Move::Paper) {
+    //         if challenger.eq(&Move::Rock) {
+    //             return 1;
+    //         } else if challenger.eq(&Move::Scissors) {
+    //             return -1;
+    //         } else {
+    //             return 0;
+    //         }
+    //     }
+    //     else {
+    //         if challenger.eq(&Move::Rock) {
+    //             return -1;
+    //         } else if challenger.eq(&Move::Scissors) {
+    //             return 0;
+    //         } else  {
+    //             return 1;
+    //         }
+    //     }
+    // }
+    fn compare(&self, challenger: &Self) -> Ordering {
+    	use Move::*;
+        match (self, challenger) {
+    		(Rock, Scissors) | (Paper, Rock) | (Scissors, Paper) => Ordering::Greater,
+    		(Rock, Rock) | (Paper, Paper) | (Scissors, Scissors) => Ordering::Equal,
+    		(Scissors, Rock) | (Rock, Paper) | (Paper, Scissors)  => Ordering::Less
+    	}
     }
 }
 
@@ -86,14 +95,11 @@ impl RockPaperScissors {
         let p_move = self.player_move.as_ref().unwrap();
         let c_move = self.challenger_move.as_ref().unwrap();
         let result = p_move.compare(&c_move);
-        if result == 0 {
-            return Ok(format!("{} played {:?} and {} played {:?}. Tie!", self.player_name, p_move, self.challenger_name, c_move));
+        match result {
+            Ordering::Greater => return Ok(format!("{} played {:?} and {} played {:?}. {} Wins!", self.player_name, p_move, self.challenger_name, c_move, self.player_name)),
+            Ordering::Equal => return Ok(format!("{} played {:?} and {} played {:?}. Tie!", self.player_name, p_move, self.challenger_name, c_move)),
+            Ordering::Less => return Ok(format!("{} played {:?} and {} played {:?}. {} Wins!", self.player_name, p_move, self.challenger_name, c_move, self.challenger_name)),
         }
-        if result == 1 {
-            return Ok(format!("{} played {:?} and {} played {:?}. Player Wins!", self.player_name, p_move, self.challenger_name, c_move));
-        }
-        // result == -1
-        Ok(format!("{} played {:?} and {} played {:?}. Challenger Wins!", self.player_name, p_move, self.challenger_name, c_move))
     }
 
     pub fn play(&mut self, _ctx: &Context, p_name: String, p_move: Option<Move>) -> Result<String> {
