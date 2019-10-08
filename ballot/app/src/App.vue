@@ -44,7 +44,7 @@
                 >Learn more about Oasis</a>
                 or review the
                 <a
-                  href="https://help.oasislabs.com/en/articles/3117188-beginner-secret-ballot"
+                  href="https://docs.oasis.dev/tutorials/ballot.html"
                   target="_blank"
                 >step-by-step process</a>
                 to build this service.
