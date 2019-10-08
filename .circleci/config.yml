@@ -43,7 +43,7 @@ jobs:
           command: oasis-chain > oasis-chain.log & oasis test
       - run:
           name: Build Rock Paper Scissors
-          working_directory: rock-paper-scissors
+          working_directory: rock-paper-scissors/service
           command: oasis-build
       - run:
           name: Test Rock Paper Scissors
