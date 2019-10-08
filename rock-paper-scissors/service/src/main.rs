@@ -1,20 +1,17 @@
-use oasis_std::{Address, Context};
 #[macro_use]
-extern crate serde;
+use oasis_std::{Address, Context};
+use serde::{Serialize, Deserialize};
 
 #[derive(oasis_std::Service)]
 struct RockPaperScissors {
     player_name: String,
-    player_move: Move, // TODO would be better as an enum?
+    player_move: Option<Move>,
     challenger_name: String,
-    challenger_move: Move,
-    played: bool, // whether or not someone can challenge. true = player has played. false = nobody has played or just finished.
-    challenged: bool,
+    challenger_move: Option<Move>,
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq)]
 pub enum Move {
-    Null,
     Rock,
     Paper,
     Scissors,
@@ -22,10 +19,7 @@ pub enum Move {
 
 impl Move {
     fn compare(&self, challenger: &Self) -> i32 {
-        if self.eq(&Move::Null) || challenger.eq(&Move::Null) {
-            panic!("Trying to compare Null move!");
-        }
-        else if self.eq(&Move::Rock) {
+        if self.eq(&Move::Rock) {
             if challenger.eq(&Move::Rock) {
                 return 0;
             } else if challenger.eq(&Move::Scissors) {
@@ -53,22 +47,14 @@ impl Move {
             }
         }
     }
-
-    fn is_valid(&self) -> bool {
-        if !self.eq(&Move::Rock) && !self.eq(&Move::Paper) && !self.eq(&Move::Scissors) {
-            return false;
-        } else {
-            return true;
-        }
-    }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum Error {
     GameNotFinished,
+    InvalidMove,
     AlreadyPlayed,
     AlreadyChallenged,
-    InvalidMove
 }
 
 type Result<T> = std::result::Result<T, Error>;
@@ -78,65 +64,63 @@ impl RockPaperScissors {
     pub fn new(_ctx: &Context) -> Self {
         Self {
             player_name: "".to_string(),
-            player_move: Move::Null,
+            player_move: None,
             challenger_name: "".to_string(),
-            challenger_move: Move::Null,
-            played: false,
-            challenged: false,
+            challenger_move: None,
         }
 
     }
 
     pub fn can_play(&self, _ctx: &Context) -> bool {
-        return !self.played;
+        return self.player_move.is_none();
     }
 
     pub fn can_challenge(&self, _ctx: &Context) -> bool {
-        return !self.challenged;
+        return self.challenger_move.is_none();
     }
 
     pub fn reveal(&self, _ctx: &Context) -> Result<String> {
-        if !self.played || !self.challenged {
+        if self.player_move.is_none() || self.challenger_move.is_none() {
             return Err(Error::GameNotFinished);
         }
-        let result = self.player_move.compare(&self.challenger_move);
+        let p_move = self.player_move.as_ref().unwrap();
+        let c_move = self.challenger_move.as_ref().unwrap();
+        let result = p_move.compare(&c_move);
         if result == 0 {
-            return Ok(format!("{} played {:?} and {} played {:?}. Tie!", self.player_name, self.player_move, self.challenger_name, self.challenger_move));
+            return Ok(format!("{} played {:?} and {} played {:?}. Tie!", self.player_name, p_move, self.challenger_name, c_move));
         }
         if result == 1 {
-            return Ok(format!("{} played {:?} and {} played {:?}. Player Wins!", self.player_name, self.player_move, self.challenger_name, self.challenger_move));
+            return Ok(format!("{} played {:?} and {} played {:?}. Player Wins!", self.player_name, p_move, self.challenger_name, c_move));
         }
         // result == -1
-        Ok(format!("{} played {:?} and {} played {:?}. Challenger Wins!", self.player_name, self.player_move, self.challenger_name, self.challenger_move))
+        Ok(format!("{} played {:?} and {} played {:?}. Challenger Wins!", self.player_name, p_move, self.challenger_name, c_move))
     }
 
-    pub fn play(&mut self, _ctx: &Context, p_name: String, p_move: Move) -> Result<String> {
-        if self.played {
-            return Err(Error::AlreadyPlayed);
-        }
-        if !p_move.is_valid() {
+    pub fn play(&mut self, _ctx: &Context, p_name: String, p_move: Option<Move>) -> Result<String> {
+        if p_move.is_none() {
             return Err(Error::InvalidMove);
+        }
+        if self.player_move.is_some() {
+            return Err(Error::AlreadyPlayed);
         }
         self.player_move = p_move;
         self.player_name = p_name;
-        self.played = true;
-        if self.played && self.challenged {
+        if self.player_move.is_some() && self.challenger_move.is_some() {
             return Ok("Both players have played. Use reveal() to see what both players' moves were.".to_string());
         }
         Ok(format!("Player {} has played.", self.player_name))
     }
 
-    pub fn challenge(&mut self, _ctx: &Context, c_name: String, c_move: Move) -> Result<String> {
-        if self.challenged {
-            return Err(Error::AlreadyChallenged);
-        }
-        if !c_move.is_valid() {
+    pub fn challenge(&mut self, _ctx: &Context, c_name: String, c_move: Option<Move>) -> Result<String> {
+        if c_move.is_none() {
             return Err(Error::InvalidMove);
+        }
+        if self.challenger_move.is_some() {
+            return Err(Error::AlreadyChallenged);
         }
         self.challenger_move = c_move;
         self.challenger_name = c_name;
-        self.challenged = true;
-        if self.played && self.challenged {
+        if self.player_move.is_some() && self.challenger_move.is_some() {
             return Ok("Both players have played. Use reveal() to see what both players' moves were.".to_string());
         }
         Ok(format!("Player {} has played.", self.challenger_name))
@@ -170,13 +154,13 @@ mod tests {
         assert_eq!(game.can_play(&player_ctx), true);
         assert_eq!(game.can_challenge(&player_ctx), true);
         // player 1 plays rock
-        game.play(&player_ctx, "stan".to_string(), Move::Rock);
+        game.play(&player_ctx, "stan".to_string(), Some(Move::Rock));
         // anyone can now challenge
         assert_eq!(game.can_play(&player_ctx), false);
         // challenger challenges, plays rock
         assert_eq!(game.can_challenge(&player_ctx), true);
         // challenger challenges, plays rock
-        game.challenge(&challenger_ctx, "nick".to_string(), Move::Rock);
+        game.challenge(&challenger_ctx, "nick".to_string(), Some(Move::Rock));
         // nobody can challenge anymore
         assert_eq!(game.can_challenge(&player_ctx), false);
         assert_eq!(game.reveal(&player_ctx).unwrap(), "stan played Rock and nick played Rock. Tie!");
@@ -192,14 +176,14 @@ mod tests {
         assert!(game.reveal(&player_ctx).is_err());
 
         // stan plays first, plays rock
-        game.play(&player_ctx, "stan".to_string(), Move::Paper);
+        game.play(&player_ctx, "stan".to_string(), Some(Move::Paper));
         // you can't play again
-        assert!(game.play(&player_ctx, "mal".to_string(), Move::Scissors).is_err());
+        assert!(game.play(&player_ctx, "mal".to_string(), Some(Move::Scissors)).is_err());
 
         // challenger challenges, plays rock
-        game.challenge(&challenger_ctx, "nick".to_string(), Move::Paper);
+        game.challenge(&challenger_ctx, "nick".to_string(), Some(Move::Paper));
         // you can't challenge again
-        assert!(game.challenge(&challenger_ctx, "mal".to_string(), Move::Scissors).is_err());
+        assert!(game.challenge(&challenger_ctx, "mal".to_string(), Some(Move::Scissors)).is_err());
         // nobody can challenge anymore
         assert_eq!(game.can_play(&player_ctx), false);
     }
@@ -211,8 +195,8 @@ mod tests {
         let mut game = RockPaperScissors::new(&player_ctx);
 
         // you can't play an invalid move
-        assert!(game.play(&player_ctx, "mal".to_string(), Move::Null).is_err());
+        assert!(game.play(&player_ctx, "mal".to_string(), None).is_err());
         // you can't challenge an invalid move
-        assert!(game.challenge(&challenger_ctx, "mal".to_string(), Move::Null).is_err());
+        assert!(game.challenge(&challenger_ctx, "mal".to_string(), None).is_err());
     }
 }
