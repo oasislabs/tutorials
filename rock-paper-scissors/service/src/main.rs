@@ -1,6 +1,6 @@
 #[macro_use]
 use oasis_std::{Address, Context};
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
 
 #[derive(oasis_std::Service)]
@@ -19,42 +19,13 @@ pub enum Move {
 }
 
 impl Move {
-    // fn compare(&self, challenger: &Self) -> i32 {
-    //     if self.eq(&Move::Rock) {
-    //         if challenger.eq(&Move::Rock) {
-    //             return 0;
-    //         } else if challenger.eq(&Move::Scissors) {
-    //             return 1;
-    //         } else {
-    //             return -1;
-    //         }
-    //     }
-    //     else if self.eq(&Move::Paper) {
-    //         if challenger.eq(&Move::Rock) {
-    //             return 1;
-    //         } else if challenger.eq(&Move::Scissors) {
-    //             return -1;
-    //         } else {
-    //             return 0;
-    //         }
-    //     }
-    //     else {
-    //         if challenger.eq(&Move::Rock) {
-    //             return -1;
-    //         } else if challenger.eq(&Move::Scissors) {
-    //             return 0;
-    //         } else  {
-    //             return 1;
-    //         }
-    //     }
-    // }
     fn compare(&self, challenger: &Self) -> Ordering {
-    	use Move::*;
+        use Move::*;
         match (self, challenger) {
-    		(Rock, Scissors) | (Paper, Rock) | (Scissors, Paper) => Ordering::Greater,
-    		(Rock, Rock) | (Paper, Paper) | (Scissors, Scissors) => Ordering::Equal,
-    		(Scissors, Rock) | (Rock, Paper) | (Paper, Scissors)  => Ordering::Less
-    	}
+            (Rock, Scissors) | (Paper, Rock) | (Scissors, Paper) => Ordering::Greater,
+            (Rock, Rock) | (Paper, Paper) | (Scissors, Scissors) => Ordering::Equal,
+            (Scissors, Rock) | (Rock, Paper) | (Paper, Scissors) => Ordering::Less,
+        }
     }
 }
 
@@ -69,7 +40,6 @@ pub enum Error {
 type Result<T> = std::result::Result<T, Error>;
 
 impl RockPaperScissors {
-
     pub fn new(_ctx: &Context) -> Self {
         Self {
             player_name: "".to_string(),
@@ -77,7 +47,6 @@ impl RockPaperScissors {
             challenger_name: "".to_string(),
             challenger_move: None,
         }
-
     }
 
     pub fn can_play(&self, _ctx: &Context) -> bool {
@@ -96,9 +65,24 @@ impl RockPaperScissors {
         let c_move = self.challenger_move.as_ref().unwrap();
         let result = p_move.compare(&c_move);
         match result {
-            Ordering::Greater => return Ok(format!("{} played {:?} and {} played {:?}. {} Wins!", self.player_name, p_move, self.challenger_name, c_move, self.player_name)),
-            Ordering::Equal => return Ok(format!("{} played {:?} and {} played {:?}. Tie!", self.player_name, p_move, self.challenger_name, c_move)),
-            Ordering::Less => return Ok(format!("{} played {:?} and {} played {:?}. {} Wins!", self.player_name, p_move, self.challenger_name, c_move, self.challenger_name)),
+            Ordering::Greater => {
+                return Ok(format!(
+                    "{} played {:?} and {} played {:?}. {} Wins!",
+                    self.player_name, p_move, self.challenger_name, c_move, self.player_name
+                ))
+            }
+            Ordering::Equal => {
+                return Ok(format!(
+                    "{} played {:?} and {} played {:?}. Tie!",
+                    self.player_name, p_move, self.challenger_name, c_move
+                ))
+            }
+            Ordering::Less => {
+                return Ok(format!(
+                    "{} played {:?} and {} played {:?}. {} Wins!",
+                    self.player_name, p_move, self.challenger_name, c_move, self.challenger_name
+                ))
+            }
         }
     }
 
@@ -112,12 +96,20 @@ impl RockPaperScissors {
         self.player_move = p_move;
         self.player_name = p_name;
         if self.player_move.is_some() && self.challenger_move.is_some() {
-            return Ok("Both players have played. Use reveal() to see what both players' moves were.".to_string());
+            return Ok(
+                "Both players have played. Use reveal() to see what both players' moves were."
+                    .to_string(),
+            );
         }
         Ok(format!("Player {} has played.", self.player_name))
     }
 
-    pub fn challenge(&mut self, _ctx: &Context, c_name: String, c_move: Option<Move>) -> Result<String> {
+    pub fn challenge(
+        &mut self,
+        _ctx: &Context,
+        c_name: String,
+        c_move: Option<Move>,
+    ) -> Result<String> {
         if c_move.is_none() {
             return Err(Error::InvalidMove);
         }
@@ -127,12 +119,14 @@ impl RockPaperScissors {
         self.challenger_move = c_move;
         self.challenger_name = c_name;
         if self.player_move.is_some() && self.challenger_move.is_some() {
-            return Ok("Both players have played. Use reveal() to see what both players' moves were.".to_string());
+            return Ok(
+                "Both players have played. Use reveal() to see what both players' moves were."
+                    .to_string(),
+            );
         }
         Ok(format!("Player {} has played.", self.challenger_name))
     }
 }
-
 
 fn main() {
     oasis_std::service!(RockPaperScissors);
@@ -143,7 +137,6 @@ mod tests {
     extern crate oasis_test;
 
     use super::*;
-
 
     fn create_account() -> (Address, Context) {
         let sender = oasis_test::create_account(1);
@@ -169,7 +162,10 @@ mod tests {
         game.challenge(&challenger_ctx, "nick".to_string(), Some(Move::Rock));
         // nobody can challenge anymore
         assert_eq!(game.can_challenge(&player_ctx), false);
-        assert_eq!(game.reveal(&player_ctx).unwrap(), "stan played Rock and nick played Rock. Tie!");
+        assert_eq!(
+            game.reveal(&player_ctx).unwrap(),
+            "stan played Rock and nick played Rock. Tie!"
+        );
     }
 
     #[test]
@@ -184,12 +180,16 @@ mod tests {
         // stan plays first, plays rock
         game.play(&player_ctx, "stan".to_string(), Some(Move::Paper));
         // you can't play again
-        assert!(game.play(&player_ctx, "mal".to_string(), Some(Move::Scissors)).is_err());
+        assert!(game
+            .play(&player_ctx, "mal".to_string(), Some(Move::Scissors))
+            .is_err());
 
         // challenger challenges, plays rock
         game.challenge(&challenger_ctx, "nick".to_string(), Some(Move::Paper));
         // you can't challenge again
-        assert!(game.challenge(&challenger_ctx, "mal".to_string(), Some(Move::Scissors)).is_err());
+        assert!(game
+            .challenge(&challenger_ctx, "mal".to_string(), Some(Move::Scissors))
+            .is_err());
         // nobody can challenge anymore
         assert_eq!(game.can_play(&player_ctx), false);
     }
@@ -203,6 +203,8 @@ mod tests {
         // you can't play an invalid move
         assert!(game.play(&player_ctx, "mal".to_string(), None).is_err());
         // you can't challenge an invalid move
-        assert!(game.challenge(&challenger_ctx, "mal".to_string(), None).is_err());
+        assert!(game
+            .challenge(&challenger_ctx, "mal".to_string(), None)
+            .is_err());
     }
 }
