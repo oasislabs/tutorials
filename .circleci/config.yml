@@ -44,7 +44,7 @@ jobs:
       - run:
           name: Build Rock Paper Scissors
           working_directory: rock-paper-scissors/service
-          command: oasis-build
+          command: oasis build
       - run:
           name: Test Rock Paper Scissors
           working_directory: rock-paper-scissors
