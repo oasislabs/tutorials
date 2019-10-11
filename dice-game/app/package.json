@@ -1,0 +1,38 @@
+{
+  "name": "dice_game",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "directories": {
+    "test": "test",
+    "bin": "scripts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "deploy": "node scripts/deploy_service.js",
+    "clean": "rimraf dist",
+    "lint": "eslint  '{src, test}/**/*.ts'",
+    "lint:fix": "npm run-script lint -- --fix"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.18",
+    "@typescript-eslint/eslint-plugin": "^2.3.3",
+    "@typescript-eslint/parser": "^2.3.3",
+    "chalk": "^2.4.2",
+    "eslint": "^6.5.1",
+    "jest": "^24.9.0",
+    "rimraf": "^3.0.0",
+    "ts-jest": "^24.1.0",
+    "ts-node": "^8.4.1",
+    "typescript": "^3.6.4"
+  },
+  "dependencies": {
+    "@oasislabs/client": "^1.0.0-rc.24"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  }
+}
