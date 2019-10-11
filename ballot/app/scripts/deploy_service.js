@@ -1,7 +1,7 @@
 const chalk = require('chalk');
 const oasis = require('@oasislabs/client');
 
-oasis.workspace.Ballot.deploy('pikachu',  ['snorlex', 'ghastly'], {
+oasis.workspace.Ballot.deploy('pokemon',  ['snorlex', 'ghastly'], {
   header: {confidential: false},
 })
   .then(res => {
