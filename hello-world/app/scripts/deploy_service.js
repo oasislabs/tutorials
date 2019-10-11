@@ -1,7 +1,7 @@
 const chalk = require('chalk');
 const oasis = require('@oasislabs/client');
 
-oasis.workspace.HelloWorld.deploy({
+oasis.workspace.HelloWorld.deploy('pikachu',  ['snorlex', 'ghastly'], {
   header: {confidential: false},
 })
   .then(res => {
