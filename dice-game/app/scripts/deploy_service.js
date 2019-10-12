@@ -1,7 +1,7 @@
 const chalk = require('chalk');
 const oasis = require('@oasislabs/client');
 
-oasis.workspace.DiceGame.deploy('pokemon', {
+oasis.workspace.DiceGame.deploy(3, {
   header: {confidential: false},
 })
   .then(res => {
