@@ -1,16 +1,16 @@
 const chalk = require('chalk');
 const oasis = require('@oasislabs/client');
 
-oasis.workspace.HelloWorld.deploy({
+oasis.workspace.RockPaperScissors.deploy({
   header: {confidential: false},
 })
   .then(res => {
     let addrHex = Buffer.from(res.address).toString('hex');
-    console.log(`    ${chalk.green('Deployed')} HelloWorld at 0x${addrHex}`);
+    console.log(`    ${chalk.green('Deployed')} RockPaperScissors at 0x${addrHex}`);
   })
   .catch(err => {
     console.error(
-      `${chalk.red('error')}: could not deploy HelloWorld: ${err.message}`,
+      `${chalk.red('error')}: could not deploy RockPaperScissors: ${err.message}`,
     );
   })
   .finally(() => {
