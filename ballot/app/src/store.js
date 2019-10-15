@@ -76,7 +76,7 @@ export default new Vuex.Store({
     },
     async getBallotID() {
       // eslint-disable-next-line
-      return this.state.ballot._inner.address;
+      return this.state.ballot.address;
     },
     async getCandidates() {
       return this.state.ballot.candidates();
