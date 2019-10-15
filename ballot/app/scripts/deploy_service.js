@@ -1,7 +1,7 @@
 const chalk = require('chalk');
 const oasis = require('@oasislabs/client');
 
-oasis.workspace.Ballot.deploy({
+oasis.workspace.Ballot.deploy(/* Your constructor args here */ {
   header: {confidential: false},
 })
   .then(res => {

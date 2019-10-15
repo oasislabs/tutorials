@@ -29,14 +29,14 @@ impl Ballot {
         }
     }
 
-    /// Returns the candidates being voted upon.
-    pub fn candidates(&self, _ctx: &Context) -> Vec<&str> {
-        self.candidates.iter().map(String::as_ref).collect()
-    }
-
     /// Returns the description of this ballot.
     pub fn description(&self, _ctx: &Context) -> &str {
         &self.description
+    }
+
+    /// Returns the candidates being voted upon.
+    pub fn candidates(&self, _ctx: &Context) -> &[String] {
+        &self.candidates
     }
 
     /// Returns whether voting is still open.
@@ -127,7 +127,7 @@ mod tests {
             Ballot::new(&admin_ctx, description.to_string(), candidates.clone());
 
         assert_eq!(ballot.description(&admin_ctx), description);
-        assert_eq!(ballot.candidates(&admin_ctx), candidates);
+        assert_eq!(ballot.candidates(&admin_ctx).to_vec(), candidates);
         assert_eq!(ballot.voting_open(&admin_ctx), true);
 
         // Can't get winner before voting has closed.
