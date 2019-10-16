@@ -5,7 +5,7 @@ oasis.workspace.RockPaperScissors.deploy({
   header: {confidential: false},
 })
   .then(res => {
-    let addrHex = Buffer.from(res._inner.address).toString('hex');
+    let addrHex = Buffer.from(res.address).toString('hex');
     console.log(`    ${chalk.green('Deployed')} RockPaperScissors at 0x${addrHex}`);
   })
   .catch(err => {
