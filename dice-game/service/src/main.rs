@@ -1,5 +1,3 @@
-extern crate rand; // 0.6.5
-
 use rand::Rng;
 use map_vec::Map;
 use oasis_std::{Address, Context};
