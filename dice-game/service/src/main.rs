@@ -35,7 +35,7 @@ impl DiceGame {
     }
 
     /// rolls a dice, resulting in a random number from 1-6
-    pub fn roll(&mut self, ctx: &Context) -> Result<()> {
+    pub fn roll(&mut self, ctx: &Context) -> Result<u32> {
         if self.scores.len() >= (self.num_players as usize) {
             return Err("Maximum number of players rolled".to_string());
         }
@@ -51,21 +51,7 @@ impl DiceGame {
         }
 
         self.scores.insert(ctx.sender(), score);
-        Ok(())
-    }
-
-    /// A magic roll that returns a specified value. Used for testing purposes
-    pub fn magic_roll(&mut self, ctx: &Context, value: u32) -> Result<()> {
-        if self.scores.len() >= (self.num_players as usize) {
-            return Err("Maximum number of players rolled".to_string());
-        }
-
-        if value > self.max_score {
-            self.max_score = value;
-        }
-
-        self.scores.insert(ctx.sender(), value);
-        Ok(())
+        Ok(score)
     }
 
     /// returns a vector of players with the highest dice roll
@@ -113,28 +99,55 @@ mod tests {
         assert_eq!(game.num_players(&admin_ctx), num_players);
         assert_eq!(game.is_in_play(&admin_ctx), true);
 
+        let player_one_score = game.roll(&player_one_ctx).unwrap();
+
         // players can only roll once
-        game.roll(&player_one_ctx).unwrap();
         assert!(game.roll(&player_one_ctx).is_err());
 
         // winner is player_one (the only player that rolled so far)
         assert_eq!(game.winner(&admin_ctx).unwrap(), vec![player_one]);
 
-        let big_num = 7;
-        game.magic_roll(&player_two_ctx, big_num).unwrap();
-        assert_eq!(game.max_score(&admin_ctx), big_num);
+        // let winner = game.winner(&admin_ctx).unwrap();
 
-        game.magic_roll(&player_three_ctx, big_num).unwrap();
-        assert_eq!(game.max_score(&admin_ctx), big_num);
+        let player_two_score = game.roll(&player_two_ctx).unwrap();
+        let two_player_max = game.max_score(&admin_ctx);
+
+        let two_player_winner;
+        // checks that scores successfully updated after 2 rolls
+        if player_two_score > player_one_score {
+            assert_eq!(two_player_max, player_two_score);
+            two_player_winner = vec![player_two];
+        } else if player_two_score < player_one_score {
+            assert_eq!(two_player_max, player_one_score);
+            two_player_winner = vec![player_one];
+        } else {
+            two_player_winner = vec![player_one, player_two];
+        }
+
+        // checks that winners are successfully updated
+        assert_eq!(game.winner(&admin_ctx).unwrap(), two_player_winner);
+
+        let player_three_score = game.roll(&player_three_ctx).unwrap();
+        let final_max = game.max_score(&admin_ctx);
+
+        let mut three_player_winner;
+        // checks that scores successfully updated after 3 rolls
+        if two_player_max > player_three_score {
+            assert_eq!(final_max, two_player_max);
+            three_player_winner = two_player_winner
+        } else if two_player_max < player_three_score {
+            assert_eq!(final_max, player_three_score);
+            three_player_winner = vec![player_three]
+        } else {
+            three_player_winner = two_player_winner;
+            three_player_winner.push(player_three);
+        }
+
+        // checks that winners are successfully updated
+        assert_eq!(game.winner(&admin_ctx).unwrap(), three_player_winner);
 
         // maximum number of players have rolled
         assert_eq!(game.is_in_play(&admin_ctx), false);
         assert!(game.roll(&player_four_ctx).is_err());
-
-        // Both players 2 and 3 magic_rolled 7s
-        assert_eq!(
-            game.winner(&admin_ctx).unwrap(),
-            vec![player_two, player_three]
-        );
     }
 }
