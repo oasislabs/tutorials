@@ -1,6 +1,6 @@
-use rand::Rng;
 use map_vec::Map;
 use oasis_std::{Address, Context};
+use rand::Rng;
 
 #[derive(oasis_std::Service)]
 struct DiceGame {
@@ -24,7 +24,7 @@ impl DiceGame {
         self.scores.len() < (self.num_players as usize)
     }
 
-    /// returns num_players 
+    /// returns num_players
     pub fn num_players(&self, _ctx: &Context) -> u32 {
         self.num_players
     }
@@ -59,7 +59,7 @@ impl DiceGame {
         if self.scores.len() >= (self.num_players as usize) {
             return Err("Maximum number of players rolled".to_string());
         }
-        
+
         if value > self.max_score {
             self.max_score = value;
         }
@@ -76,8 +76,7 @@ impl DiceGame {
             .into_iter()
             .filter(|&(_, v)| v == self.max_score)
             .map(|(k, _)| k)
-            .collect()
-        )
+            .collect())
     }
 }
 
@@ -109,9 +108,8 @@ mod tests {
         let (_, player_four_ctx) = create_account();
         let num_players = 3;
 
-        let mut game =
-            DiceGame::new(&admin_ctx, num_players);
-        
+        let mut game = DiceGame::new(&admin_ctx, num_players);
+
         assert_eq!(game.num_players(&admin_ctx), num_players);
         assert_eq!(game.is_in_play(&admin_ctx), true);
 
@@ -134,6 +132,9 @@ mod tests {
         assert!(game.roll(&player_four_ctx).is_err());
 
         // Both players 2 and 3 magic_rolled 7s
-        assert_eq!(game.winner(&admin_ctx).unwrap(), vec![player_two, player_three]);
+        assert_eq!(
+            game.winner(&admin_ctx).unwrap(),
+            vec![player_two, player_three]
+        );
     }
 }
