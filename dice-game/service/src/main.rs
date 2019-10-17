@@ -1,6 +1,7 @@
 use map_vec::Map;
 use oasis_std::{Address, Context};
 use rand::Rng;
+use serde::{Deserialize, Serialize};
 
 #[derive(oasis_std::Service, Default)]
 struct DiceGame {
@@ -9,6 +10,13 @@ struct DiceGame {
     scores: Map<String, u32>,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+pub enum DiceGameError {
+    MaxPlayerRolled,
+    RepeatRoll
+}
+
+type Result<T> = std::result::Result<T, DiceGameError>;
 impl DiceGame {
     pub fn new(_ctx: &Context, num_players: u32) -> Self {
         Self {
@@ -34,14 +42,14 @@ impl DiceGame {
     }
 
     /// Rolls a dice, resulting in a random number from 1-6.
-    pub fn roll(&mut self, _ctx: &Context, p_name:  String) -> Result<u32,  &'static str> {
+    pub fn roll(&mut self, _ctx: &Context, p_name:  String) -> Result<u32> {
         if self.scores.len() >= (self.num_players as usize) {
-            return Err("Maximum number of players rolled");
+            return Err(DiceGameError::MaxPlayerRolled);
         }
 
         // each player is only allowed to roll once
         if self.scores.contains_key(&p_name) {
-            return Err("Repeat rolls not allowed!");
+            return Err(DiceGameError::RepeatRoll);
         }
 
         let score = rand::thread_rng().gen_range(1, 7);
@@ -54,7 +62,7 @@ impl DiceGame {
     }
 
     /// Returns a vector of players with the highest dice roll.
-    pub fn winner(&self, _ctx: &Context) -> Result<Vec<String>, String> {
+    pub fn winner(&self, _ctx: &Context) -> Result<Vec<String>> {
         Ok(self
             .scores
             .clone()
