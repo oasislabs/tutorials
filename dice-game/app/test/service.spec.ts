@@ -16,6 +16,30 @@ describe('DiceGame', () => {
     expect(service).toBeTruthy();
   });
 
+  it('start dice game', async() => {
+    let inPlay = await service.isInPlay();
+    expect(inPlay).toEqual(true);
+
+    // players
+    let playerOne =  "stan";
+    let playerTwo =  "nick";
+
+    let score1 = await service.roll(playerOne);
+    let score2 = await service.roll(playerTwo);
+
+    inPlay = await service.isInPlay();
+    expect(inPlay).toEqual(false);
+
+    let winner = await service.winner();
+    if (score1 > score2) {
+      expect([playerOne]).toEqual(winner);
+    } else if (score1 < score2) {
+      expect([playerTwo]).toEqual(winner);
+    } else {
+      expect([playerOne, playerTwo]).toEqual(winner);
+    }
+  })
+
   afterAll(() => {
     oasis.disconnect();
   });
