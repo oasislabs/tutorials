@@ -34,14 +34,14 @@ impl DiceGame {
     }
 
     /// Rolls a dice, resulting in a random number from 1-6.
-    pub fn roll(&mut self, _ctx: &Context, p_name:  String) -> Result<u32, String> {
+    pub fn roll(&mut self, _ctx: &Context, p_name:  String) -> Result<u32,  &'static str> {
         if self.scores.len() >= (self.num_players as usize) {
-            return Err("Maximum number of players rolled".to_string());
+            return Err("Maximum number of players rolled");
         }
 
         // each player is only allowed to roll once
         if self.scores.contains_key(&p_name) {
-            return Err("Repeat rolls not allowed!".to_string());
+            return Err("Repeat rolls not allowed!");
         }
 
         let score = rand::thread_rng().gen_range(1, 7);
