@@ -1,4 +1,0 @@
-*.rs.bk
-dist/
-node_modules/
-target/

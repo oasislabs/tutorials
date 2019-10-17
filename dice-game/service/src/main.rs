@@ -2,14 +2,13 @@ use map_vec::Map;
 use oasis_std::{Address, Context};
 use rand::Rng;
 
-#[derive(oasis_std::Service)]
+#[derive(oasis_std::Service, Default)]
 struct DiceGame {
     max_score: u32,
     num_players: u32,
     scores: Map<Address, u32>,
 }
 
-type Result<T> = std::result::Result<T, String>;
 impl DiceGame {
     pub fn new(_ctx: &Context, num_players: u32) -> Self {
         Self {
@@ -19,23 +18,23 @@ impl DiceGame {
         }
     }
 
-    /// returns whether still in play
+    /// Returns whether the current dice game is still in play.
     pub fn is_in_play(&self, _ctx: &Context) -> bool {
         self.scores.len() < (self.num_players as usize)
     }
 
-    /// returns num_players
+    /// Returns the number of players.
     pub fn num_players(&self, _ctx: &Context) -> u32 {
         self.num_players
     }
 
-    /// returns the max score in play
+    /// Returns the max score in play.
     pub fn max_score(&self, _ctx: &Context) -> u32 {
         self.max_score
     }
 
-    /// rolls a dice, resulting in a random number from 1-6
-    pub fn roll(&mut self, ctx: &Context) -> Result<u32> {
+    /// Rolls a dice, resulting in a random number from 1-6.
+    pub fn roll(&mut self, ctx: &Context) -> Result<u32, String> {
         if self.scores.len() >= (self.num_players as usize) {
             return Err("Maximum number of players rolled".to_string());
         }
@@ -54,8 +53,8 @@ impl DiceGame {
         Ok(score)
     }
 
-    /// returns a vector of players with the highest dice roll
-    pub fn winner(&self, _ctx: &Context) -> Result<Vec<Address>> {
+    /// Returns a vector of players with the highest dice roll.
+    pub fn winner(&self, _ctx: &Context) -> Result<Vec<Address>, String> {
         Ok(self
             .scores
             .clone()

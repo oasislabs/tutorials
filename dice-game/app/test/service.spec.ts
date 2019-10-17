@@ -6,7 +6,7 @@ describe('DiceGame', () => {
   let service;
 
   beforeAll(async () => {
-    service = await oasis.workspace.DiceGame.deploy(5, {
+    service = await oasis.workspace.DiceGame.deploy(2, {
       header: {confidential: false},
       gasLimit: '0xe79732',
     });
