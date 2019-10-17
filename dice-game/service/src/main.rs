@@ -1,14 +1,22 @@
 use map_vec::Map;
 use oasis_std::{Address, Context};
 use rand::Rng;
+use serde::{Deserialize, Serialize};
 
 #[derive(oasis_std::Service, Default)]
 struct DiceGame {
     max_score: u32,
     num_players: u32,
-    scores: Map<Address, u32>,
+    scores: Map<String, u32>,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+pub enum Error {
+    MaxPlayerRolled,
+    RepeatRoll
+}
+
+type Result<T> = std::result::Result<T, Error>;
 impl DiceGame {
     pub fn new(_ctx: &Context, num_players: u32) -> Self {
         Self {
@@ -34,14 +42,14 @@ impl DiceGame {
     }
 
     /// Rolls a dice, resulting in a random number from 1-6.
-    pub fn roll(&mut self, ctx: &Context) -> Result<u32, String> {
+    pub fn roll(&mut self, _ctx: &Context, p_name:  String) -> Result<u32> {
         if self.scores.len() >= (self.num_players as usize) {
-            return Err("Maximum number of players rolled".to_string());
+            return Err(Error::MaxPlayerRolled);
         }
 
         // each player is only allowed to roll once
-        if self.scores.contains_key(&ctx.sender()) {
-            return Err("Repeat rolls not allowed!".to_string());
+        if self.scores.contains_key(&p_name) {
+            return Err(Error::RepeatRoll);
         }
 
         let score = rand::thread_rng().gen_range(1, 7);
@@ -49,12 +57,12 @@ impl DiceGame {
             self.max_score = score;
         }
 
-        self.scores.insert(ctx.sender(), score);
+        self.scores.insert(p_name, score);
         Ok(score)
     }
 
     /// Returns a vector of players with the highest dice roll.
-    pub fn winner(&self, _ctx: &Context) -> Result<Vec<Address>, String> {
+    pub fn winner(&self, _ctx: &Context) -> Result<Vec<String>> {
         Ok(self
             .scores
             .clone()
@@ -86,10 +94,16 @@ mod tests {
     fn test() {
         // Instantiation
         let (_admin, admin_ctx) = create_account();
+        let (_, player_one_ctx) = create_account();
+        let (_, player_two_ctx) = create_account();
+        let (_, player_three_ctx) = create_account();
 
-        let (player_one, player_one_ctx) = create_account();
-        let (player_two, player_two_ctx) = create_account();
-        let (player_three, player_three_ctx) = create_account();
+
+        // player names
+        let player_one_name =  "stan";
+        let player_two_name =  "nick";
+        let player_three_name =  "fang";
+
         let (_, player_four_ctx) = create_account();
         let num_players = 3;
 
@@ -98,35 +112,35 @@ mod tests {
         assert_eq!(game.num_players(&admin_ctx), num_players);
         assert_eq!(game.is_in_play(&admin_ctx), true);
 
-        let player_one_score = game.roll(&player_one_ctx).unwrap();
+        let player_one_score = game.roll(&player_one_ctx, player_one_name.to_string()).unwrap();
 
         // players can only roll once
-        assert!(game.roll(&player_one_ctx).is_err());
+        assert!(game.roll(&player_one_ctx, player_one_name.to_string()).is_err());
 
         // winner is player_one (the only player that rolled so far)
-        assert_eq!(game.winner(&admin_ctx).unwrap(), vec![player_one]);
+        assert_eq!(game.winner(&admin_ctx).unwrap(), vec![player_one_name]);
 
         // let winner = game.winner(&admin_ctx).unwrap();
 
-        let player_two_score = game.roll(&player_two_ctx).unwrap();
+        let player_two_score = game.roll(&player_two_ctx, player_two_name.to_string()).unwrap();
         let two_player_max = game.max_score(&admin_ctx);
 
         let two_player_winner;
         // checks that scores successfully updated after 2 rolls
         if player_two_score > player_one_score {
             assert_eq!(two_player_max, player_two_score);
-            two_player_winner = vec![player_two];
+            two_player_winner = vec![player_two_name];
         } else if player_two_score < player_one_score {
             assert_eq!(two_player_max, player_one_score);
-            two_player_winner = vec![player_one];
+            two_player_winner = vec![player_one_name];
         } else {
-            two_player_winner = vec![player_one, player_two];
+            two_player_winner = vec![player_one_name, player_two_name];
         }
 
         // checks that winners are successfully updated
         assert_eq!(game.winner(&admin_ctx).unwrap(), two_player_winner);
 
-        let player_three_score = game.roll(&player_three_ctx).unwrap();
+        let player_three_score = game.roll(&player_three_ctx, player_three_name.to_string()).unwrap();
         let final_max = game.max_score(&admin_ctx);
 
         let mut three_player_winner;
@@ -136,10 +150,10 @@ mod tests {
             three_player_winner = two_player_winner
         } else if two_player_max < player_three_score {
             assert_eq!(final_max, player_three_score);
-            three_player_winner = vec![player_three]
+            three_player_winner = vec![player_three_name]
         } else {
             three_player_winner = two_player_winner;
-            three_player_winner.push(player_three);
+            three_player_winner.push(player_three_name);
         }
 
         // checks that winners are successfully updated
@@ -147,6 +161,6 @@ mod tests {
 
         // maximum number of players have rolled
         assert_eq!(game.is_in_play(&admin_ctx), false);
-        assert!(game.roll(&player_four_ctx).is_err());
+        assert!(game.roll(&player_four_ctx, "".to_string()).is_err());
     }
 }
