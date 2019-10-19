@@ -5,7 +5,7 @@ oasis.workspace.Ballot.deploy('pokemon',  ['snorlax', 'gastly'], {
   header: {confidential: false},
 })
   .then(res => {
-    let addrHex = Buffer.from(res.address).toString('hex');
+    let addrHex = oasis.utils.bytes.toHex(res.address);
     console.log(`    ${chalk.green('Deployed')} Ballot at 0x${addrHex}`);
   })
   .catch(err => {
