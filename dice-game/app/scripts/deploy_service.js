@@ -5,8 +5,7 @@ oasis.workspace.DiceGame.deploy(3, {
   header: {confidential: false},
 })
   .then(res => {
-    let addrHex = Buffer.from(res.address).toString('hex');
-    console.log(`    ${chalk.green('Deployed')} DiceGame at 0x${addrHex}`);
+    console.log(`    ${chalk.green('Deployed')} DiceGame at 0x${res.address.hex}`);
   })
   .catch(err => {
     console.error(chalk.red('error'), err);
