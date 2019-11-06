@@ -5,8 +5,7 @@ oasis.workspace.HelloWorld.deploy({
   header: {confidential: false},
 })
   .then(res => {
-    let addrHex = Buffer.from(res.address).toString('hex');
-    console.log(`    ${chalk.green('Deployed')} HelloWorld at 0x${addrHex}`);
+    console.log(`    ${chalk.green('Deployed')} HelloWorld at 0x${res.address.hex}`);
   })
   .catch(err => {
     console.error(

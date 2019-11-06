@@ -89,16 +89,6 @@ export default {
       question: '',
       series: [],
       chartOptions: {
-        chart: {
-          events: {
-            dataPointMouseEnter: (_event, _chartContext, config) => {
-
-            },
-            dataPointMouseLeave: (event, chartContext, config) => {
-
-            },
-          },
-        },
         labels: [],
         legend: {
           show: false,

@@ -17,15 +17,13 @@ export default new Vuex.Store({
     ],
     ballot: null,
     bytecode: '/assets/ballot.wasm',
-    gateway: 'https://gateway.devnet.oasiscloud.io',
-    token: 'AAAAAhq2tOs8hDVZLUob7LDnb1SsBS2ZGV3zIguKznK5jv/J',
-    /*
-     * Note: If you are copying this template you should modify it to interact with services
-     * via the Oasis developer gateway, as opposed to a locally-running blockchain. Your Oasis
-     * client will sign transactions for you locally in-browser using a Deoxysii key.
-     *
-     * https://github.com/oasislabs/deoxysii
-     */
+    deployLocally: process.env.NODE_ENV === 'development',
+    // For deploying against a local `oasis chain`
+    localGateway: 'ws://localhost:8546',
+    localCredential: 'range drive remove bleak mule satisfy mandate east lion minimum unfold ready',
+    // For deploying against the Oasis Gateway
+    productionGateway: 'https://gateway.devnet.oasiscloud.io',
+    productionCredential: 'AAAAAhq2tOs8hDVZLUob7LDnb1SsBS2ZGV3zIguKznK5jv/J',
   },
   mutations: {
     /* eslint no-param-reassign: ["error", { "props": false }] */
@@ -36,10 +34,22 @@ export default new Vuex.Store({
   actions: {
     // Ballot Instantiation
     async connectToOasis() {
-      const headers = new Map();
-      headers.set('X-OASIS-SESSION-KEY', 'ballot-session');
-
-      const gateway = new oasis.gateways.Gateway(this.state.gateway, this.state.token, { headers });
+      let gateway;
+      if (this.state.deployLocally) {
+        gateway = new oasis.gateways.Web3Gateway(
+          this.state.localGateway,
+          oasis.Wallet.fromMnemonic(this.state.localCredential),
+        );
+      } else {
+        const headers = new Map();
+        headers.set('X-OASIS-SESSION-KEY', 'ballot-session');
+  
+        gateway = new oasis.gateways.Gateway(
+          this.state.productionGateway,
+          this.state.productionCredential,
+          { headers },
+        );
+      }
       oasis.setGateway(gateway);
     },
     async deployService({ commit }) {
@@ -55,6 +65,8 @@ export default new Vuex.Store({
 
       const ballot = await oasis.deploy(...this.state.args, {
         bytecode,
+        // Deploy non-confidentially for local deploys
+        header: { confidential: !this.state.deployLocally },
         gasLimit: '0xf42400',
       });
 
@@ -62,8 +74,9 @@ export default new Vuex.Store({
     },
     async loadService({ commit }, address) {
       await this.dispatch('connectToOasis');
-
-      const ballot = await oasis.Service.at(address);
+      const ballot = await oasis.Service.at(
+        new oasis.Address(address),
+      );
 
       commit('setBallot', ballot);
     },
@@ -76,7 +89,7 @@ export default new Vuex.Store({
     },
     async getBallotID() {
       // eslint-disable-next-line
-      return this.state.ballot.address;
+      return this.state.ballot.address.hex;
     },
     async getCandidates() {
       return this.state.ballot.candidates();

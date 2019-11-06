@@ -76,13 +76,8 @@ export default {
     } else {
       await this.deployService();
 
-      // Extract and parse ballot ID
+      // Extract ballot ID
       let ballotID = await this.getBallotID();
-      ballotID = `0x${Array.from(
-        ballotID,
-        byte => (`0${(byte & 0xFF).toString(16)}`).slice(-2),
-      ).join('')}`;
-
       this.$router.push({
         path: '/',
         query: {
