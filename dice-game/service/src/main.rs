@@ -34,7 +34,7 @@ impl DiceGame {
     }
 
     /// Rolls a dice, resulting in a random number from 1-6.
-    pub fn roll(&mut self, _ctx: &Context, p_name:  String) -> Result<u32,  &'static str> {
+    pub fn roll(&mut self, _ctx: &Context, p_name: String) -> Result<u32, &'static str> {
         if self.scores.len() >= (self.num_players as usize) {
             return Err("Maximum number of players rolled");
         }
@@ -90,11 +90,10 @@ mod tests {
         let (_, player_two_ctx) = create_account();
         let (_, player_three_ctx) = create_account();
 
-
         // player names
-        let player_one_name =  "stan";
-        let player_two_name =  "nick";
-        let player_three_name =  "fang";
+        let player_one_name = "stan";
+        let player_two_name = "nick";
+        let player_three_name = "fang";
 
         let (_, player_four_ctx) = create_account();
         let num_players = 3;
@@ -104,17 +103,23 @@ mod tests {
         assert_eq!(game.num_players(&admin_ctx), num_players);
         assert_eq!(game.is_in_play(&admin_ctx), true);
 
-        let player_one_score = game.roll(&player_one_ctx, player_one_name.to_string()).unwrap();
+        let player_one_score = game
+            .roll(&player_one_ctx, player_one_name.to_string())
+            .unwrap();
 
         // players can only roll once
-        assert!(game.roll(&player_one_ctx, player_one_name.to_string()).is_err());
+        assert!(game
+            .roll(&player_one_ctx, player_one_name.to_string())
+            .is_err());
 
         // winner is player_one (the only player that rolled so far)
         assert_eq!(game.winner(&admin_ctx).unwrap(), vec![player_one_name]);
 
         // let winner = game.winner(&admin_ctx).unwrap();
 
-        let player_two_score = game.roll(&player_two_ctx, player_two_name.to_string()).unwrap();
+        let player_two_score = game
+            .roll(&player_two_ctx, player_two_name.to_string())
+            .unwrap();
         let two_player_max = game.max_score(&admin_ctx);
 
         let two_player_winner;
@@ -132,7 +137,9 @@ mod tests {
         // checks that winners are successfully updated
         assert_eq!(game.winner(&admin_ctx).unwrap(), two_player_winner);
 
-        let player_three_score = game.roll(&player_three_ctx, player_three_name.to_string()).unwrap();
+        let player_three_score = game
+            .roll(&player_three_ctx, player_three_name.to_string())
+            .unwrap();
         let final_max = game.max_score(&admin_ctx);
 
         let mut three_player_winner;

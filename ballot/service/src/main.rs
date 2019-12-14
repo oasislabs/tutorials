@@ -123,8 +123,7 @@ mod tests {
 
         let description = "What's for dinner?";
         let candidates = vec!["beef".to_string(), "yogurt".to_string()];
-        let mut ballot =
-            Ballot::new(&admin_ctx, description.to_string(), candidates.clone());
+        let mut ballot = Ballot::new(&admin_ctx, description.to_string(), candidates.clone());
 
         assert_eq!(ballot.description(&admin_ctx), description);
         assert_eq!(ballot.candidates(&admin_ctx), candidates);

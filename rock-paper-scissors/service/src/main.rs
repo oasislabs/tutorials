@@ -3,7 +3,6 @@ use std::cmp::Ordering;
 use oasis_std::{Address, Context};
 use serde::{Deserialize, Serialize};
 
-
 #[derive(oasis_std::Service)]
 struct RockPaperScissors {
     player_name: String,
@@ -66,24 +65,18 @@ impl RockPaperScissors {
         let c_move = self.challenger_move.as_ref().unwrap();
         let result = p_move.compare(&c_move);
         match result {
-            Ordering::Greater => {
-                Ok(format!(
-                    "{} played {:?} and {} played {:?}. {} Wins!",
-                    self.player_name, p_move, self.challenger_name, c_move, self.player_name
-                ))
-            }
-            Ordering::Equal => {
-                Ok(format!(
-                    "{} played {:?} and {} played {:?}. Tie!",
-                    self.player_name, p_move, self.challenger_name, c_move
-                ))
-            }
-            Ordering::Less => {
-                Ok(format!(
-                    "{} played {:?} and {} played {:?}. {} Wins!",
-                    self.player_name, p_move, self.challenger_name, c_move, self.challenger_name
-                ))
-            }
+            Ordering::Greater => Ok(format!(
+                "{} played {:?} and {} played {:?}. {} Wins!",
+                self.player_name, p_move, self.challenger_name, c_move, self.player_name
+            )),
+            Ordering::Equal => Ok(format!(
+                "{} played {:?} and {} played {:?}. Tie!",
+                self.player_name, p_move, self.challenger_name, c_move
+            )),
+            Ordering::Less => Ok(format!(
+                "{} played {:?} and {} played {:?}. {} Wins!",
+                self.player_name, p_move, self.challenger_name, c_move, self.challenger_name
+            )),
         }
     }
 
