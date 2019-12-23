@@ -1,6 +1,6 @@
 use std::cmp::Ordering;
 
-use oasis_std::{Address, Context};
+use oasis_std::Context;
 use serde::{Deserialize, Serialize};
 
 #[derive(oasis_std::Service)]

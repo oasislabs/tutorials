@@ -1,5 +1,5 @@
 use map_vec::Map;
-use oasis_std::{Address, Context};
+use oasis_std::Context;
 use rand::Rng;
 
 #[derive(oasis_std::Service, Default)]
