@@ -74,6 +74,7 @@ mod tests {
     extern crate oasis_test;
 
     use super::*;
+    use oasis_std::{Address, Context};
 
     /// Creates a new account and a `Context` with the new account as the sender.
     fn create_account() -> (Address, Context) {

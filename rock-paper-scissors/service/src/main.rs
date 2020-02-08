@@ -131,6 +131,7 @@ mod tests {
     extern crate oasis_test;
 
     use super::*;
+    use oasis_std::{Address, Context};
 
     fn create_account() -> (Address, Context) {
         let sender = oasis_test::create_account(1);
