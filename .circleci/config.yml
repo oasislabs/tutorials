@@ -49,6 +49,14 @@ jobs:
           name: Test Rock Paper Scissors
           working_directory: rock-paper-scissors
           command: oasis-chain > oasis-chain.log & oasis test
+      - run:
+          name: Build Dice Game
+          working_directory: dice-game/service
+          command: oasis build
+      - run:
+          name: Test Dice Game
+          working_directory: dice-game
+          command: oasis-chain > oasis-chain.log & oasis test
   build_ballot:
     executor: rust
     steps:
