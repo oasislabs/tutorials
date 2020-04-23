@@ -1,0 +1,7 @@
+[workspace]
+members = ["service"]
+
+[profile.release]
+lto = true
+opt-level = "z"
+panic = "abort"
