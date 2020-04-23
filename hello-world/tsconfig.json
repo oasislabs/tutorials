@@ -1,0 +1,11 @@
+{
+    "include": ["app/src"],
+    "compilerOptions": {
+        "esModuleInterop": true,
+        "lib": ["es6"],
+        "moduleResolution": "node",
+        "outDir": "dist/",
+        "strict": true,
+        "target": "es5"
+    }
+}

@@ -1,14 +1,8 @@
-#[macro_use]
-extern crate serde;
-
-use map_vec::{map::Entry, Map};
-use oasis_std::Context;
-
-#[derive(Serialize, Deserialize, Debug, Eq, PartialEq)]
-pub enum Error {
-    UnsupportedLanguage,
-    DuplicateEntry,
-}
+use oasis_std::{
+    abi::*,
+    collections::map::{Entry, Map},
+    Context,
+};
 
 #[derive(oasis_std::Service)]
 struct HelloWorld {
@@ -35,7 +29,6 @@ impl HelloWorld {
     pub fn say_hello(&self, _ctx: &Context, language: String) -> Option<&String> {
         self.hello_worlds.get(&language)
     }
-
     /// Add a new language Hello World! pair.
     pub fn add_hello(
         &mut self,
@@ -50,6 +43,12 @@ impl HelloWorld {
         };
         Ok(())
     }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub enum Error {
+    UnsupportedLanguage,
+    DuplicateEntry,
 }
 
 fn main() {

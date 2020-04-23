@@ -3,16 +3,10 @@ name = "hello-world"
 version = "0.1.0"
 authors = ["Oasis Labs <feedback@oasislabs.com>"]
 edition = "2018"
+publish = false
 
 [dependencies]
-map_vec = "0.3"
-oasis-std = "=0.2.7"
-serde = { version = "1.0", features = ["derive"] }
+oasis-std = "0.4"
 
 [dev-dependencies]
-oasis-test = "=0.2.1"
-
-[profile.release]
-opt-level = "z"
-lto = true
-panic = "abort"
+oasis-test = "0.4"

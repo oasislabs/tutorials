@@ -1,7 +1,6 @@
 use std::cmp::Ordering;
 
-use oasis_std::Context;
-use serde::{Deserialize, Serialize};
+use oasis_std::{abi::*, Context};
 
 #[derive(oasis_std::Service)]
 struct RockPaperScissors {
@@ -128,7 +127,7 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    extern crate oasis_test;
+    use oasis_std::Address;
 
     use super::*;
     use oasis_std::{Address, Context};
@@ -148,13 +147,15 @@ mod tests {
         assert_eq!(game.can_play(&player_ctx), true);
         assert_eq!(game.can_challenge(&player_ctx), true);
         // player 1 plays rock
-        game.play(&player_ctx, "stan".to_string(), Some(Move::Rock));
+        game.play(&player_ctx, "stan".to_string(), Some(Move::Rock))
+            .unwrap();
         // anyone can now challenge
         assert_eq!(game.can_play(&player_ctx), false);
         // challenger challenges, plays rock
         assert_eq!(game.can_challenge(&player_ctx), true);
         // challenger challenges, plays rock
-        game.challenge(&challenger_ctx, "nick".to_string(), Some(Move::Rock));
+        game.challenge(&challenger_ctx, "nick".to_string(), Some(Move::Rock))
+            .unwrap();
         // nobody can challenge anymore
         assert_eq!(game.can_challenge(&player_ctx), false);
         assert_eq!(
@@ -173,14 +174,16 @@ mod tests {
         assert!(game.reveal(&player_ctx).is_err());
 
         // stan plays first, plays rock
-        game.play(&player_ctx, "stan".to_string(), Some(Move::Paper));
+        game.play(&player_ctx, "stan".to_string(), Some(Move::Paper))
+            .unwrap();
         // you can't play again
         assert!(game
             .play(&player_ctx, "mal".to_string(), Some(Move::Scissors))
             .is_err());
 
         // challenger challenges, plays rock
-        game.challenge(&challenger_ctx, "nick".to_string(), Some(Move::Paper));
+        game.challenge(&challenger_ctx, "nick".to_string(), Some(Move::Paper))
+            .unwrap();
         // you can't challenge again
         assert!(game
             .challenge(&challenger_ctx, "mal".to_string(), Some(Move::Scissors))
