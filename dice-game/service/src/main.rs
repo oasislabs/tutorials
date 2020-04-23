@@ -1,6 +1,5 @@
-use map_vec::Map;
-use oasis_std::Context;
-use rand::Rng;
+use oasis_std::{collections::Map, Context};
+use rand::Rng as _;
 
 #[derive(oasis_std::Service, Default)]
 struct DiceGame {
@@ -75,6 +74,8 @@ mod tests {
 
     use super::*;
     use oasis_std::{Address, Context};
+
+    use oasis_std::Address;
 
     /// Creates a new account and a `Context` with the new account as the sender.
     fn create_account() -> (Address, Context) {

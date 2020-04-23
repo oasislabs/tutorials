@@ -1,0 +1,57 @@
+{
+    "private": true,
+    "name": "dice-game",
+    "version": "0.0.0",
+    "description": "",
+    "main": "./app/src/main.ts",
+    "scripts": {
+        "build": "tsc -b",
+        "test": "jest",
+        "lint": "eslint 'app/{src,test}/**.ts'; prettier --check 'app/{src,test}/**.ts' package.json tsconfig.json",
+        "start": "node dist/src/main.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "MIT",
+    "jest": {
+        "coveragePathIgnorePatterns": [
+            "test/*"
+        ],
+        "moduleFileExtensions": [
+            "js",
+            "ts"
+        ],
+        "transform": {
+            "\\.ts$": "ts-jest"
+        },
+        "testEnvironment": "node",
+        "testRegex": ".*\\.spec\\.ts$"
+    },
+    "prettier": {
+        "semi": true,
+        "singleQuote": true,
+        "tabWidth": 4,
+        "trailingComma": "all"
+    },
+    "dependencies": {
+        "oasis-std": "=0.1.0-rc.30"
+    },
+    "devDependencies": {
+        "@types/jest": "^25.2.1",
+        "@types/node": "^13.13.1",
+        "@typescript-eslint/eslint-plugin": "^2.29.0",
+        "@typescript-eslint/parser": "^2.29.0",
+        "eslint": "^6.8.0",
+        "eslint-config-prettier": "^6.11.0",
+        "jest": "^25.4.0",
+        "prettier": "^2.0.5",
+        "ts-jest": "^25.4.0",
+        "typescript": "^3.8.3"
+    },
+    "oasis": {
+        "serviceDependencies": {
+            "dice-game": "file:./target/service/dice-game.wasm"
+        },
+        "clientsDir": "app/service-clients"
+    }
+}
