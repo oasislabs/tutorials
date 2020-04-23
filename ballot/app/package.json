@@ -9,9 +9,9 @@
     "test": "echo \"Run tests here\""
   },
   "dependencies": {
-    "@oasislabs/client": "^1.0.0-rc.28",
     "apexcharts": "^3.8.2",
     "core-js": "^3.2.1",
+    "oasis-std": "0.1.0-rc.30",
     "oasis-style": "^1.0.0-rc1",
     "vue": "^2.6.10",
     "vue-apexcharts": "^1.4.0",
@@ -25,7 +25,7 @@
     "eslint": "^6.2.2",
     "eslint-plugin-import": "^2.18.0",
     "eslint-plugin-vue": "^5.2.3",
-    "node-sass": "^4.12.0",
+    "node-sass": "^4.14.0",
     "raw-loader": "^3.0.0",
     "sass": "^1.22.10",
     "sass-loader": "^7.1.0",
@@ -44,5 +44,11 @@
   "browserslist": [
     "> 1%",
     "last 2 versions"
-  ]
+  ],
+  "oasis": {
+    "serviceDependencies": {
+      "ballot": "file:../service/target/service/ballot.wasm"
+    },
+    "clientsDir": "service-clients"
+  }
 }
