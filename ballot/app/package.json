@@ -9,7 +9,7 @@
     "test": "echo \"Run tests here\""
   },
   "dependencies": {
-    "apexcharts": "^3.8.2",
+    "apexcharts": "^3.24.0",
     "core-js": "^3.2.1",
     "oasis-std": "0.1.0-rc.30",
     "oasis-style": "^1.0.0-rc1",
